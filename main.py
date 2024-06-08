@@ -1,7 +1,10 @@
+import datetime
+
 from Clients.OpenElevationClient import OpenElevationClient
 from Clients.OpenMeteoClient import OpenMeteoClient
 from Clients.OpenStreetMapClient import OpenStreetMapClient
 from UrbanCenterDistanceCalculator import UrbanCenterDistanceCalculator
+from AstronomicalEvents import AstronomicalEvents
 
 
 def main():
@@ -10,9 +13,9 @@ def main():
     terrain_types = osm_client.fetch_terrain_type()
     print(f"Terrain types at {latitude}, {longitude}: {terrain_types}")
 
-    elevation_client = OpenElevationClient(latitude=latitude, longitude=longitude)
-    elevation = elevation_client.fetch_elevation()
-    print(f"Elevation at {latitude}, {longitude}: {elevation} meters")
+    # elevation_client = OpenElevationClient(latitude=latitude, longitude=longitude)
+    # elevation = elevation_client.fetch_elevation()
+    # print(f"Elevation at {latitude}, {longitude}: {elevation} meters")
 
     open_meteo_client = OpenMeteoClient(latitude=latitude, longitude=longitude)
     print(open_meteo_client)
@@ -39,7 +42,11 @@ def main():
     print(f"Distance from nearest urban center: {distance} km")
     print(f"Nearest urban center: {center}")
 
+    astronomical_events = AstronomicalEvents(latitude, longitude)
+    date = datetime.datetime.today()
+    print(f"Astronomical events for {date.date()}: {astronomical_events.get_astronomical_events(date)}")
+
+
 if __name__ == '__main__':
     main()
-
 
