@@ -45,3 +45,24 @@ class OpenStreetMapClient:
             return "Unknown terrain type"
         return list(terrain_types)
 
+    def fetch_urban_centers(self, bbox: str) -> list[dict]:
+        """
+        Fetch urban centers from OpenStreetMap API.
+        :param bbox: String representing bounding box coordinates for the region
+        :return: A list of dictionaries containing the name, latitude, and longitude of urban centers inside the region
+        """
+        overpass_query = f"""
+        [out:json];
+        (
+          node["place"="city"]({bbox});
+          node["place"="town"]({bbox});
+        );
+        out body;
+        """
+        response = requests.get(self.overpass_url, params={'data': overpass_query})
+        response.raise_for_status()
+        data = response.json()
+        centers = [{'name': element['tags']['name'], 'latitude': element['lat'], 'longitude': element['lon']}
+                   for element in data['elements'] if 'tags' in element and 'name' in element['tags']]
+        return centers
+
