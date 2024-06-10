@@ -5,7 +5,7 @@ from Clients.OpenMeteoClient import OpenMeteoClient
 from Clients.OpenStreetMapClient import OpenStreetMapClient
 from UrbanCenterDistanceCalculator import UrbanCenterDistanceCalculator
 from AstronomicalEvents import AstronomicalEvents
-
+from utils import configure_logging
 
 def main():
     latitude, longitude = 51.5518, 15.3354
@@ -48,5 +48,6 @@ def main():
 
 
 if __name__ == '__main__':
+    configure_logging()
     main()
 

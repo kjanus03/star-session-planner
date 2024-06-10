@@ -1,6 +1,7 @@
 from typing import Union
 
 import requests
+import logging
 
 
 class OpenStreetMapClient:
@@ -13,6 +14,7 @@ class OpenStreetMapClient:
         :param latitude: Latitude of the location
         :param longitude: Longitude of the location
         """
+        self.logger = logging.getLogger(__name__)
         self.latitude = latitude
         self.longitude = longitude
         self.overpass_url = "http://overpass-api.de/api/interpreter"
@@ -31,19 +33,25 @@ class OpenStreetMapClient:
         );
         out body;
         """
-        response = requests.get(self.overpass_url, params={'data': overpass_query})
-        response.raise_for_status()  # Raise an error for bad status codes
-        data = response.json()
-        elements = data.get('elements', [])
+        try:
+            self.logger.info("Fetching terrain type...")
+            response = requests.get(self.overpass_url, params={'data': overpass_query})
+            response.raise_for_status()  # Raise an error for bad status codes
+            data = response.json()
+            elements = data.get('elements', [])
 
-        terrain_types = set()
-        for element in elements:
-            if 'tags' in element and 'natural' in element['tags']:
-                terrain_types.add(element['tags']['natural'])
+            terrain_types = set()
+            for element in elements:
+                if 'tags' in element and 'natural' in element['tags']:
+                    terrain_types.add(element['tags']['natural'])
 
-        if not terrain_types:
+            if not terrain_types:
+                return "Unknown terrain type"
+            self.logger.info("Terrain type fetched successfully.")
+            return list(terrain_types)
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Error fetching terrain type: {e}")
             return "Unknown terrain type"
-        return list(terrain_types)
 
     def fetch_urban_centers(self, bbox: str) -> list[dict]:
         """
@@ -59,10 +67,15 @@ class OpenStreetMapClient:
         );
         out body;
         """
-        response = requests.get(self.overpass_url, params={'data': overpass_query})
-        response.raise_for_status()
-        data = response.json()
-        centers = [{'name': element['tags']['name'], 'latitude': element['lat'], 'longitude': element['lon']}
-                   for element in data['elements'] if 'tags' in element and 'name' in element['tags']]
-        return centers
-
+        try:
+            self.logger.info("Fetching urban centers...")
+            response = requests.get(self.overpass_url, params={'data': overpass_query})
+            response.raise_for_status()  # Raise an error for bad status codes
+            data = response.json()
+            centers = [{'name': element['tags']['name'], 'latitude': element['lat'], 'longitude': element['lon']}
+                       for element in data['elements'] if 'tags' in element and 'name' in element['tags']]
+            self.logger.info("Urban centers fetched successfully.")
+            return centers
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Error fetching urban centers: {e}")
+            return []

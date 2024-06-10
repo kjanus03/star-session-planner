@@ -2,6 +2,8 @@ import openmeteo_requests
 import requests_cache
 import pandas as pd
 from retry_requests import retry
+import logging
+
 from utils import get_timezone_from_coordinates
 
 
@@ -21,6 +23,7 @@ class OpenMeteoClient:
         :param retries: Number of retries for network requests (default: 5)
         :param backoff_factor: Backoff factor for retrying requests (default: 0.2)
         """
+        self.logger = logging.getLogger(__name__)
         self.latitude = latitude
         self.longitude = longitude
         self.timezone = get_timezone_from_coordinates(latitude, longitude)
@@ -40,6 +43,7 @@ class OpenMeteoClient:
             "timezone": self.timezone
         }
         self.response = None
+        self.logger.info(f"Initialized OpenMeteoClient for coordinates ({latitude}, {longitude})")
 
     def __str__(self) -> str:
         return (f"WeatherClient for location ({self.latitude}, {self.longitude}) in timezone {self.timezone}\n"
@@ -50,10 +54,12 @@ class OpenMeteoClient:
         Fetch weather data from the Open-Meteo API. The data is stored in the response attribute.
         """
         try:
+            self.logger.info("Fetching weather data...")
             responses = self.client.weather_api(self.url, params=self.params)
             self.response = responses[0]
+            self.logger.info("Weather data fetched successfully.")
         except Exception as e:
-            print(f"Error fetching weather data: {e}")
+            self.logger.error(f"Error fetching weather data: {e}")
             self.response = None
 
     def get_location_info(self) -> dict:
