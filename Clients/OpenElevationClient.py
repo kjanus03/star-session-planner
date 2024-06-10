@@ -1,6 +1,7 @@
 from typing import Union
 
 import requests
+import requests_cache
 import logging
 
 
@@ -8,7 +9,7 @@ class OpenElevationClient:
     """
     Client for fetching elevation data from the Open-Elevation API.
     """
-    def __init__(self, latitude: float, longitude: float):
+    def __init__(self, latitude: float, longitude: float, cache_expiry: int = 3600):
         """
         Constructor for the OpenElevationClient class.
         :param latitude: Latitude of the location
@@ -18,6 +19,7 @@ class OpenElevationClient:
         self.latitude = latitude
         self.longitude = longitude
         self.elevation_url = "https://api.open-elevation.com/api/v1/lookup"
+        self.session = requests_cache.CachedSession('.cache', expire_after=cache_expiry)
 
     def fetch_elevation(self) -> Union[float, None]:
         """

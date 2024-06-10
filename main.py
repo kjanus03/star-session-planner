@@ -13,9 +13,9 @@ def main():
     terrain_types = osm_client.fetch_terrain_type()
     print(f"Terrain types at {latitude}, {longitude}: {terrain_types}")
 
-    # elevation_client = OpenElevationClient(latitude=latitude, longitude=longitude)
-    # elevation = elevation_client.fetch_elevation()
-    # print(f"Elevation at {latitude}, {longitude}: {elevation} meters")
+    elevation_client = OpenElevationClient(latitude=latitude, longitude=longitude)
+    elevation = elevation_client.fetch_elevation()
+    print(f"Elevation at {latitude}, {longitude}: {elevation} meters")
 
     open_meteo_client = OpenMeteoClient(latitude=latitude, longitude=longitude)
     print(open_meteo_client)

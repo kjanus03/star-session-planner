@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from skyfield.api import load, Topos
 from skyfield.almanac import find_discrete, risings_and_settings, moon_phases
 from datetime import datetime
@@ -21,6 +23,7 @@ class AstronomicalEvents:
         self.eph = load('de430.bsp')
         self.location = Topos(latitude_degrees=latitude, longitude_degrees=longitude)
 
+    @lru_cache(maxsize=128)
     def visible_planets(self, date: datetime) -> List[Dict[str, Any]]:
         """
         Find visible planets at a given date using barycenters and include their sky coordinates.
@@ -48,6 +51,7 @@ class AstronomicalEvents:
         self.logger.info("Visible planets calculated successfully.")
         return visible_planets
 
+    @lru_cache(maxsize=128)
     def check_conjunctions(self, date: datetime) -> List[Tuple[str, str]]:
         """
         Check for planetary conjunctions at a given date using barycenters.
@@ -83,6 +87,7 @@ class AstronomicalEvents:
         self.logger.info("Planetary conjunctions checked successfully.")
         return conjunctions
 
+    @lru_cache(maxsize=128)
     def check_meteor_showers(self, date: datetime) -> List[str]:
         """
         Check for meteor showers at a given date.
@@ -109,6 +114,7 @@ class AstronomicalEvents:
         self.logger.info("Meteor showers checked successfully.")
         return showers
 
+    @lru_cache(maxsize=128)
     def moon_info(self, date: datetime) -> Dict[str, Any]:
         """
         Get moonrise, moonset, and moon phase information for a given date.
@@ -138,6 +144,7 @@ class AstronomicalEvents:
         self.logger.info("Moon information retrieved successfully.")
         return {'moonrise': moonrise, 'moonset': moonset, 'moon_phase': moon_phase}
 
+    @lru_cache(maxsize=128)
     def get_astronomical_events(self, date: datetime) -> Dict[str, Any]:
         """
         Get astronomical events for a given date.
