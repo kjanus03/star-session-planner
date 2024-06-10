@@ -1,3 +1,4 @@
+from math import pi, cos
 from typing import Union
 
 import requests
@@ -53,12 +54,29 @@ class OpenStreetMapClient:
             self.logger.error(f"Error fetching terrain type: {e}")
             return "Unknown terrain type"
 
-    def fetch_urban_centers(self, bbox: str) -> list[dict]:
+    def fetch_urban_centers(self, radius_km: int = 20) -> list[dict[str, Union[str, float]]]:
         """
         Fetch urban centers from OpenStreetMap API.
-        :param bbox: String representing bounding box coordinates for the region
+        :param radius_km: Radius in kilometers for the bounding box
         :return: A list of dictionaries containing the name, latitude, and longitude of urban centers inside the region
         """
+        def calculate_bounding_box(lat: float, lon: float, radius_km: int) -> str:
+            lat_per_km = 1 / 111.0  # Approximate kilometers per degree of latitude
+            lon_per_km = 1 / (111.0 * abs(cos(lat * (pi / 180.0))))  # Approximate kilometers per degree of longitude
+
+            lat_offset = lat_per_km * radius_km
+            lon_offset = lon_per_km * radius_km
+
+            south = lat - lat_offset
+            north = lat + lat_offset
+            west = lon - lon_offset
+            east = lon + lon_offset
+
+            return f"{south},{west},{north},{east}"
+
+        bbox = calculate_bounding_box(self.latitude, self.longitude, radius_km)
+        self.logger.info(f"Bounding box for radius {radius_km} km: {bbox}")
+
         overpass_query = f"""
         [out:json];
         (
@@ -70,7 +88,7 @@ class OpenStreetMapClient:
         try:
             self.logger.info("Fetching urban centers...")
             response = requests.get(self.overpass_url, params={'data': overpass_query})
-            response.raise_for_status()  # Raise an error for bad status codes
+            response.raise_for_status()
             data = response.json()
             centers = [{'name': element['tags']['name'], 'latitude': element['lat'], 'longitude': element['lon']}
                        for element in data['elements'] if 'tags' in element and 'name' in element['tags']]

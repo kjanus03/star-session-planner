@@ -4,7 +4,7 @@ import pandas as pd
 from retry_requests import retry
 import logging
 
-from utils import get_timezone_from_coordinates
+from app.utils import get_timezone_from_coordinates
 
 
 class OpenMeteoClient:
@@ -69,6 +69,7 @@ class OpenMeteoClient:
         :return: Dictionary with location information
         """
         if self.response is None:
+            self.logger.error("No response data available. Please fetch the weather data first.")
             raise ValueError("No response data available. Please fetch the weather data first.")
 
         return {
@@ -87,6 +88,7 @@ class OpenMeteoClient:
         :return: Dictionary with current weather information
         """
         if self.response is None:
+            self.logger.error("No response data available. Please fetch the weather data first.")
             raise ValueError("No response data available. Please fetch the weather data first.")
 
         current = self.response.Current()
@@ -105,6 +107,7 @@ class OpenMeteoClient:
         :return: DataFrame with hourly weather information
         """
         if self.response is None:
+            self.logger.error("No response data available. Please fetch the weather data first.")
             raise ValueError("No response data available. Please fetch the weather data first.")
 
         hourly = self.response.Hourly()
@@ -129,6 +132,7 @@ class OpenMeteoClient:
         :return: DataFrame with daily weather information
         """
         if self.response is None:
+            self.logger.error("No response data available. Please fetch the weather data first.")
             raise ValueError("No response data available. Please fetch the weather data first.")
 
         daily = self.response.Daily()
