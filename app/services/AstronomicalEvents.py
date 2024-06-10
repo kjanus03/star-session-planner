@@ -3,7 +3,7 @@ from functools import lru_cache
 from skyfield.api import load, Topos
 from skyfield.almanac import find_discrete, risings_and_settings, moon_phases
 from datetime import datetime
-from typing import List, Dict, Tuple, Any
+from typing import Any
 import logging
 
 
@@ -24,7 +24,7 @@ class AstronomicalEvents:
         self.location = Topos(latitude_degrees=latitude, longitude_degrees=longitude)
 
     @lru_cache(maxsize=128)
-    def visible_planets(self, date: datetime) -> List[Dict[str, Any]]:
+    def visible_planets(self, date: datetime) -> list[dict[str, Any]]:
         """
         Find visible planets at a given date using barycenters and include their sky coordinates.
         :param date: Datetime object representing date for which to find visible planets
@@ -52,7 +52,7 @@ class AstronomicalEvents:
         return visible_planets
 
     @lru_cache(maxsize=128)
-    def check_conjunctions(self, date: datetime) -> List[Tuple[str, str]]:
+    def check_conjunctions(self, date: datetime) -> list[tuple[str, str]]:
         """
         Check for planetary conjunctions at a given date using barycenters.
         :param date: Datetime object representing date for which to check conjunctions
@@ -88,7 +88,7 @@ class AstronomicalEvents:
         return conjunctions
 
     @lru_cache(maxsize=128)
-    def check_meteor_showers(self, date: datetime) -> List[str]:
+    def check_meteor_showers(self, date: datetime) -> list[str]:
         """
         Check for meteor showers at a given date.
         :param date: Datetime object representing date for which to check meteor showers
@@ -115,7 +115,7 @@ class AstronomicalEvents:
         return showers
 
     @lru_cache(maxsize=128)
-    def moon_info(self, date: datetime) -> Dict[str, Any]:
+    def moon_info(self, date: datetime) -> dict[str, Any]:
         """
         Get moonrise, moonset, and moon phase information for a given date.
         :param date: Datetime object representing the date for which to get moon information
@@ -145,7 +145,7 @@ class AstronomicalEvents:
         return {'moonrise': moonrise, 'moonset': moonset, 'moon_phase': moon_phase}
 
     @lru_cache(maxsize=128)
-    def get_astronomical_events(self, date: datetime) -> Dict[str, Any]:
+    def get_astronomical_events(self, date: datetime) -> dict[str, Any]:
         """
         Get astronomical events for a given date.
         :param date: Datetime object representing the date for which to get astronomical events

@@ -4,10 +4,21 @@ from app.clients.OpenMeteoClient import OpenMeteoClient
 from app.clients.OpenStreetMapClient import OpenStreetMapClient
 from app.services.UrbanCenterDistanceCalculator import UrbanCenterDistanceCalculator
 from app.services.AstronomicalEvents import AstronomicalEvents
+from app.utilities.JSONFormatter import JSONFormatter
 import datetime
 import logging
 
 main = Blueprint('main', __name__)
+
+
+def convert_bytes_to_str(data):
+    if isinstance(data, bytes):
+        return data.decode('utf-8')
+    elif isinstance(data, dict):
+        return {k: convert_bytes_to_str(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [convert_bytes_to_str(i) for i in data]
+    return data
 
 
 @main.route('/')
@@ -63,27 +74,18 @@ def process_coordinates():
         events = astronomical_events.get_astronomical_events(date)
         logging.info(f"Astronomical events: {events}")
 
-        # Convert datetime objects to strings and handle bytes
-        def convert_json_serializable(obj):
-            if isinstance(obj, datetime.datetime):
-                return obj.isoformat()
-            if isinstance(obj, bytes):
-                return obj.decode()  # Assuming UTF-8 encoding
-            if isinstance(obj, dict):
-                return {key: convert_json_serializable(value) for key, value in obj.items()}
-            if isinstance(obj, list):
-                return [convert_json_serializable(item) for item in obj]
-            return obj
+        result = {'terrain_types': terrain_types, 'elevation': elevation,
+            'location_info': convert_bytes_to_str(location_info),
+            'current_weather': convert_bytes_to_str(current_weather),
+            'hourly_weather': convert_bytes_to_str(hourly_weather),
+            'daily_weather': convert_bytes_to_str(daily_weather), 'urban_centers': convert_bytes_to_str(urban_centers),
+            'distance_from_urban_center': distance, 'nearest_urban_center': convert_bytes_to_str(center),
+            'astronomical_events': convert_bytes_to_str(events)}
 
-        result = {'terrain_types': terrain_types, 'elevation': elevation, 'location_info': location_info,
-            'current_weather': current_weather, 'hourly_weather': hourly_weather, 'daily_weather': daily_weather,
-            'urban_centers': urban_centers, 'distance_from_urban_center': distance, 'nearest_urban_center': center,
-            'astronomical_events': convert_json_serializable(events)}
+        formatter = JSONFormatter(result)
+        formatted_result = formatter.format()
 
-        result = convert_json_serializable(result)
-        logging.info(f"Result: {result}")
-
-        return jsonify(result)
+        return jsonify({'formatted_result': formatted_result, 'data': result})
 
     except Exception as e:
         logging.error(f"Error processing coordinates: {e}", exc_info=True)

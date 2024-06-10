@@ -4,7 +4,7 @@ import pandas as pd
 from retry_requests import retry
 import logging
 
-from app.utils import get_timezone_from_coordinates
+from app.utilities.utils import get_timezone_from_coordinates
 
 
 class OpenMeteoClient:

@@ -47,6 +47,7 @@ class OpenStreetMapClient:
                     terrain_types.add(element['tags']['natural'])
 
             if not terrain_types:
+                self.logger.info("No terrain type found.")
                 return "Unknown terrain type"
             self.logger.info("Terrain type fetched successfully.")
             return list(terrain_types)
@@ -54,7 +55,7 @@ class OpenStreetMapClient:
             self.logger.error(f"Error fetching terrain type: {e}")
             return "Unknown terrain type"
 
-    def fetch_urban_centers(self, radius_km: int = 20) -> list[dict[str, Union[str, float]]]:
+    def fetch_urban_centers(self, radius_km: int = 40) -> list[dict[str, Union[str, float]]]:
         """
         Fetch urban centers from OpenStreetMap API.
         :param radius_km: Radius in kilometers for the bounding box
