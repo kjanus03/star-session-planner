@@ -57,7 +57,7 @@ def process_coordinates():
         logging.info(f"Hourly weather: {hourly_weather}")
         logging.info(f"Daily weather: {daily_weather}")
 
-        urban_centers = osm_client.fetch_urban_centers(radius_km=20)
+        urban_centers = osm_client.fetch_urban_centers(radius_km=25)
         logging.info(f"Fetched urban centers: {urban_centers}")
 
         if not urban_centers:

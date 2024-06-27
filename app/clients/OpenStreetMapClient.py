@@ -1,5 +1,6 @@
 from math import pi, cos
 from typing import Union
+import geopy.distance
 
 import requests
 import logging
@@ -91,8 +92,9 @@ class OpenStreetMapClient:
             response = requests.get(self.overpass_url, params={'data': overpass_query})
             response.raise_for_status()
             data = response.json()
-            centers = [{'name': element['tags']['name'], 'latitude': element['lat'], 'longitude': element['lon']}
+            centers = [{'name': element['tags']['name'], 'latitude': element['lat'], 'longitude': element['lon'], 'distance': geopy.distance.distance((self.latitude, self.longitude), (element['lat'], element['lon'])).kilometers}
                        for element in data['elements'] if 'tags' in element and 'name' in element['tags']]
+            centers.sort(key=lambda x: x['distance'])
             self.logger.info("Urban centers fetched successfully.")
             return centers
         except requests.exceptions.RequestException as e:
