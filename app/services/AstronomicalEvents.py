@@ -28,7 +28,8 @@ class AstronomicalEvents:
         """
         Find visible planets at a given date using barycenters and include their sky coordinates.
         :param date: Datetime object representing date for which to find visible planets
-        :return: A list of dictionaries containing the name of the planet, the time it is visible, and its sky coordinates
+        :return: A list of dictionaries containing the name of the planet, the time it is visible, and its sky
+        coordinates
         """
         self.logger.info("Calculating visible planets...")
         t0 = self.ts.utc(date.year, date.month, date.day)

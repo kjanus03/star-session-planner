@@ -2,7 +2,6 @@ import json
 import datetime
 import logging
 from typing import Any, Union
-
 import pandas as pd
 
 
@@ -149,7 +148,6 @@ class JSONFormatter:
         event_strings = []
         for key, value in events.items():
             if isinstance(value, list):
-                # Check if the list contains dictionaries
                 if any(isinstance(item, dict) for item in value):
                     event_strings.append(
                         f"{key.replace('_', ' ').capitalize()}:\n" +
@@ -159,8 +157,7 @@ class JSONFormatter:
                     event_strings.append(f"{key.replace('_', ' ').capitalize()}: {', '.join(map(str, value))}")
             elif isinstance(value, dict):
                 event_strings.append(
-                    f"{key.replace('_', ' ').capitalize()}:\n" + json.dumps(self.convert_to_serializable(value),
-                                                                            indent=4)
+                    f"{key.replace('_', ' ').capitalize()}:\n" + json.dumps(self.convert_to_serializable(value), indent=4)
                 )
             else:
                 event_strings.append(f"{key.replace('_', ' ').capitalize()}: {value}")
@@ -168,18 +165,24 @@ class JSONFormatter:
 
     def convert_to_serializable(self, obj: Any) -> Any:
         """
-        Convert non-serializable objects like Timestamp to a serializable format.
+        Convert non-serializable objects like bytes or Timestamp to a serializable format.
         """
-        if isinstance(obj, dict):
-            return {key: JSONFormatter.convert_to_serializable(self, value) for key, value in obj.items()}
-        elif isinstance(obj, list):
-            return [JSONFormatter.convert_to_serializable(self, item) for item in obj]
-        elif isinstance(obj, pd.Timestamp):
-            return obj.isoformat()
-        elif isinstance(obj, (datetime.date, datetime.datetime)):
-            return obj.isoformat()
-        elif isinstance(obj, float):
-            return str(round(obj, 5))
-        else:
-            self.logger.warning(f"Object of type {type(obj)} is not serializable.")
-            return obj
+        try:
+            if isinstance(obj, dict):
+                return {key: self.convert_to_serializable(value) for key, value in obj.items()}
+            elif isinstance(obj, list):
+                return [self.convert_to_serializable(item) for item in obj]
+            elif isinstance(obj, pd.Timestamp):
+                return obj.isoformat()
+            elif isinstance(obj, (datetime.date, datetime.datetime)):
+                return obj.isoformat()
+            elif isinstance(obj, bytes):
+                return obj.decode('utf-8')  # Properly decode bytes to string
+            elif isinstance(obj, (int, str, float, bool, type(None))):
+                return obj  # Keep serializable types as they are
+            else:
+                self.logger.warning(f"Object of type {type(obj)} is not serializable and will be omitted.")
+                return None  # Omit non-serializable values
+        except Exception as e:
+            self.logger.error(f"Error converting object to serializable: {e}")
+            return None

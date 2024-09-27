@@ -19,7 +19,7 @@ class OpenStreetMapClient:
         self.logger = logging.getLogger(__name__)
         self.latitude = latitude
         self.longitude = longitude
-        self.overpass_url = "http://overpass-api.de/api/interpreter"
+        self.overpass_url = "https://overpass-api.de/api/interpreter"
 
     def fetch_terrain_type(self) -> Union[str, list[str]]:
         """
@@ -62,12 +62,12 @@ class OpenStreetMapClient:
         :param radius_km: Radius in kilometers for the bounding box
         :return: A list of dictionaries containing the name, latitude, and longitude of urban centers inside the region
         """
-        def calculate_bounding_box(lat: float, lon: float, radius_km: int) -> str:
+        def calculate_bounding_box(lat: float, lon: float, radius: int) -> str:
             lat_per_km = 1 / 111.0  # Approximate kilometers per degree of latitude
             lon_per_km = 1 / (111.0 * abs(cos(lat * (pi / 180.0))))  # Approximate kilometers per degree of longitude
 
-            lat_offset = lat_per_km * radius_km
-            lon_offset = lon_per_km * radius_km
+            lat_offset = lat_per_km * radius
+            lon_offset = lon_per_km * radius
 
             south = lat - lat_offset
             north = lat + lat_offset

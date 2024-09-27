@@ -8,6 +8,7 @@ from app.services.AstronomicalEvents import AstronomicalEvents
 from app.utilities.utils import configure_logging
 from app import create_app
 
+
 def main():
     latitude, longitude = 51.5518, 15.3354
     osm_client = OpenStreetMapClient(latitude=latitude, longitude=longitude)
@@ -53,4 +54,3 @@ if __name__ == '__main__':
     # main()
     app = create_app()
     app.run()
-

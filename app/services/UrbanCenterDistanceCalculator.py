@@ -19,7 +19,7 @@ class UrbanCenterDistanceCalculator:
         self.urban_centers = urban_centers
         self.coordinates = [(center['latitude'], center['longitude']) for center in urban_centers]
 
-        # Validate the shape of coordinates
+        # Validation of the shape of the coordinates
         if not self.coordinates or not all(len(coord) == 2 for coord in self.coordinates):
             self.logger.error("Coordinates must be a non-empty list of (latitude, longitude) tuples")
             raise ValueError("Coordinates must be a non-empty list of (latitude, longitude) tuples")
