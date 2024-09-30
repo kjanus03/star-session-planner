@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
+    {% extends "base.html" %}
+
+    {% block content %}
     <div id="map"></div>
     <div id="sidebar" class="sidebar">
         <h2>Stargazing Info</h2>
@@ -25,13 +28,15 @@
         <div id="Astronomical" class="tabcontent"></div>
     </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
     <!-- jQuery JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <!-- Link to external JavaScript -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+{% endblock %}
 </body>
 </html>

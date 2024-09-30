@@ -1,8 +1,14 @@
 // scripts.js
 
 var map = L.map('map', {
-    worldCopyJump: false, continuousWorld: false
+    worldCopyJump: false,
+    continuousWorld: false,
+    zoomControl: false
 }).setView([54.5260, 15.2551], 4); // Center on Europe
+
+L.control.zoom({
+    position: 'bottomleft'
+}).addTo(map);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
@@ -11,6 +17,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 var currentMarker = null;
 
 function onMapClick(e) {
+    console.log("Map clicked!");
     var lat = e.latlng.lat;
     var lon = e.latlng.lng;
 
@@ -45,6 +52,8 @@ function onMapClick(e) {
     });
 }
 
+map.on('click', onMapClick);
+
 function openTab(evt, tabName) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -60,8 +69,6 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
-
-map.on('click', onMapClick);
 
 function renderGeographicalInfo(data) {
     let html = '';
