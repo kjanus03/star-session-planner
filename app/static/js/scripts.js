@@ -84,6 +84,10 @@ function renderGeographicalInfo(data) {
     if (data.location_info) {
         html += `<div class="info-section"><h3>Location Info</h3>`;
         Object.entries(data.location_info).forEach(([key, value]) => {
+            // Round latitude and longitude to 4 decimal places
+            if (key.toLowerCase() === 'latitude' || key.toLowerCase() === 'longitude') {
+                value = parseFloat(value).toFixed(4);
+            }
             html += `<p>${key.replace(/_/g, ' ').toUpperCase()}: ${value}</p>`;
         });
         html += `</div>`;
@@ -102,11 +106,12 @@ function renderGeographicalInfo(data) {
     }
 
     if (data.nearest_urban_center) {
-        html += `<div class="info-section"><h3>Nearest Urban Center</h3><p>${data.nearest_urban_center.name} (${data.nearest_urban_center.latitude}, ${data.nearest_urban_center.longitude})</p></div>`;
+        html += `<div class="info-section"><h3>Nearest Urban Center</h3><p>${data.nearest_urban_center.name} (${data.nearest_urban_center.latitude.toFixed(2)}, ${data.nearest_urban_center.longitude.toFixed(2)})</p></div>`;
     }
 
     return html;
 }
+
 
 function renderWeatherInfo(data) {
     let html = '';
