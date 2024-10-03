@@ -128,7 +128,8 @@ function renderWeatherInfo(data) {
     if (data.hourly_weather) {
         html += `<div class="info-section"><h3>Hourly Weather</h3>`;
         data.hourly_weather.forEach(hour => {
-            html += `<p>${new Date(hour.date).toLocaleString()}: ${hour.temperature_2m}°C, Precipitation: ${hour.precipitation}mm, Cloud Cover: ${hour.cloud_cover}%</p>`;
+            html += `<p>${new Date(hour.date).toLocaleString()}: ${hour.temperature_2m}°C, 
+                    Precipitation: ${hour.precipitation}mm, Cloud Cover: ${hour.cloud_cover}% ${hour.cloud_cover_emoji}</p>`;
         });
         html += `</div>`;
     }

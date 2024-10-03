@@ -117,7 +117,7 @@ class JSONFormatter:
                 f"Cloud Cover: {cloud_cover}"
             )
             weather_entries.append(entry)
-
+        print(weather_entries)
         return "Hourly Weather:\n" + "\n".join(weather_entries)
 
     def format_daily_weather(self, daily_weather: list[dict[str, Any]]) -> str:

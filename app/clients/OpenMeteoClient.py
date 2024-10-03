@@ -122,6 +122,7 @@ class OpenMeteoClient:
             "precipitation_probability": hourly.Variables(1).ValuesAsNumpy(),
             "precipitation": hourly.Variables(2).ValuesAsNumpy(),
             "cloud_cover": hourly.Variables(3).ValuesAsNumpy(),
+            "cloud_cover_emoji": [get_cloud_cover_emoji(cloud_cover) for cloud_cover in hourly.Variables(3).ValuesAsNumpy()],
             "visibility": hourly.Variables(4).ValuesAsNumpy(),
             "is_day": hourly.Variables(5).ValuesAsNumpy()
         }
