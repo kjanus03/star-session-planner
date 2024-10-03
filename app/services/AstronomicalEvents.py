@@ -139,8 +139,9 @@ class AstronomicalEvents:
 
         moon_phase = None
         for time, phase in zip(moon_phase_times, moon_phases_list):
-            if t0 <= time <= t1:
+            if t0.tt <= time.tt <= t1.tt:
                 moon_phase = phase
+
 
         self.logger.info("Moon information retrieved successfully.")
         return {'moonrise': moonrise, 'moonset': moonset, 'moon_phase': moon_phase}

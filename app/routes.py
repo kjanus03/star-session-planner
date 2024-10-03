@@ -41,12 +41,12 @@ def process_coordinates():
 
         # Convert any bytes objects to strings
         result = convert_bytes_to_str(result)
+        logging.info(f"Converted byte objects to string for JSON serialization")
 
         formatter = JSONFormatter(result)
         formatted_result = formatter.format()
+        logging.info(f"Formatted JSON response correctly")
 
-        print(f"The type of formatted_result is: {type(formatted_result)}")
-        print(f"The formatted result is: {formatted_result}")
 
         return jsonify({'formatted_result': formatted_result, 'data': result})
 

@@ -55,20 +55,18 @@ function onMapClick(e) {
 map.on('click', onMapClick);
 
 function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
+    var i, tabcontent;
     tabcontent = document.getElementsByClassName("tabcontent");
+
+    // Hide all tab content sections
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
     }
 
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
+    // Show the selected tab content
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
 }
+
 
 function renderGeographicalInfo(data) {
     let html = '';
@@ -118,7 +116,7 @@ function renderWeatherInfo(data) {
 
     if (data.current_weather) {
         html += `<div class="info-section"><h3>Current Weather</h3>`;
-        html += `<div class="weather-item"><p><strong>Cloud Cover:</strong> ${data.current_weather.cloud_cover}%</p></div>`;
+        html += `<div class="weather-item"><p><strong>Cloud Cover:</strong> ${data.current_weather.cloud_cover}% ${data.current_weather.cloud_cover_emoji}</p></div>`;
 
         html += `<div class="weather-item"><p><strong>Time of Day:</strong> ${data.current_weather.is_day ? 'Day' : 'Night'}</p></div>`;
         html += `<div class="weather-item"><p><strong>Precipitation:</strong> ${data.current_weather.precipitation} mm</p></div>`;

@@ -1,6 +1,4 @@
 import logging
-from typing import Any
-
 from timezonefinder import TimezoneFinder
 from pytz import timezone
 
@@ -43,3 +41,19 @@ def convert_bytes_to_str(data: any):
     elif isinstance(data, list):
         return [convert_bytes_to_str(i) for i in data]
     return data
+
+def get_cloud_cover_emoji(cloud_cover: float) -> str:
+    """
+    Returns an emoji representing the cloud cover.
+    :param cloud_cover: The cloud cover percentage
+    :return: A string with the appropriate emoji
+    """
+    logging.info(f"Getting cloud cover emoji")
+    if cloud_cover <= 25:
+        return "☀️"
+    elif cloud_cover <= 50:
+        return "🌤️"
+    elif cloud_cover <= 75:
+        return "⛅"
+    else:
+        return "☁️"

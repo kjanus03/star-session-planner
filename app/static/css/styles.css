@@ -62,24 +62,6 @@ body {
     border-bottom: 1px solid #ccc;
 }
 
-.tab button {
-    background-color: #f1f1f1;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-}
-
-.tab button:hover {
-    background-color: #ddd;
-}
-
-.tab button.active {
-    background-color: #ccc;
-}
-
 .tabcontent {
     display: none;
     padding: 6px 12px;
@@ -99,3 +81,22 @@ body {
     margin-bottom: 8px;
     color: #222;
 }
+
+/* Label and Dropdown styles */
+label[for="infoDropdown"] {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+select#infoDropdown {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    font-size: 1rem;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+

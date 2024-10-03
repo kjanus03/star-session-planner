@@ -5,6 +5,7 @@ from retry_requests import retry
 import logging
 
 from app.utilities.utils import get_timezone_from_coordinates
+from app.utilities.utils import get_cloud_cover_emoji
 
 
 class OpenMeteoClient:
@@ -97,7 +98,8 @@ class OpenMeteoClient:
             "temperature_2m": current.Variables(0).Value(),
             "is_day": current.Variables(1).Value(),
             "precipitation": current.Variables(2).Value(),
-            "cloud_cover": current.Variables(3).Value()
+            "cloud_cover": current.Variables(3).Value(),
+            "cloud_cover_emoji": get_cloud_cover_emoji(current.Variables(3).Value())
         }
 
     def get_hourly_weather(self) -> pd.DataFrame:
