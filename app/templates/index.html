@@ -23,7 +23,23 @@
     {% extends "base.html" %}
 
     {% block content %}
+     <!-- City Search Form -->
+    <div id="city-search">
+        <form method="POST" action="/">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.city.label }}:
+                {{ form.city(size=40) }}
+            </div>
+            <div>
+                {{ form.submit(class_="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+
+
     <div id="map"></div>
+
     <div id="sidebar" class="sidebar">
         <div class="resizer"></div>
         <h2>Stargazing Info</h2>
@@ -36,14 +52,20 @@
 
         <div id="Geographical" class="tabcontent"></div>
         <div id="Weather" class="tabcontent">
-            <h3>Temperature</h3>
-            <canvas id="temperatureChart"></canvas>
+            <div class="info-section">
+                <h3>Temperature</h3>
+                <canvas id="temperatureChart"></canvas>
+            </div>
 
-            <h3>Cloud Cover</h3>
-            <canvas id="cloudCoverChart"></canvas>
+            <div class="info-section">
+                <h3>Cloud Cover</h3>
+                <canvas id="cloudCoverChart"></canvas>
+            </div>
 
-            <h3>Precipitation</h3>
-            <canvas id="precipitationChart"></canvas>
+            <div class="info-section">
+                <h3>Precipitation</h3>
+                <canvas id="precipitationChart"></canvas>
+            </div>
         </div>
 
         <div id="Astronomical" class="tabcontent"></div>

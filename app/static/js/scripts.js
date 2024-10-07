@@ -23,16 +23,15 @@ let isResizing = false;
 
 resizer.addEventListener('mousedown', function(e) {
     isResizing = true;
-    document.body.style.cursor = 'ew-resize';  // Change cursor to resizing mode
+    document.body.style.cursor = 'ew-resize';  // changing cursor to the resize type
 });
 
-// Mouse move event to dynamically resize the sidebar
 document.addEventListener('mousemove', function(e) {
     if (isResizing) {
-        // Calculate the new width for the sidebar based on the mouse position
+        // new width of the sidebar
         const newWidth = window.innerWidth - e.clientX;
 
-        // Apply the new width to the sidebar (limit the width to avoid overlap)
+        // resizing the sidebar
         if (newWidth > 200 && newWidth < 600) {
             sidebar.style.width = `${newWidth}px`;
             resizer.style.left = `${window.innerWidth - newWidth -25}px`;
@@ -41,7 +40,7 @@ document.addEventListener('mousemove', function(e) {
     }
 });
 
-// Mouse up event to stop resizing
+// stop resizing when mouse is released
 document.addEventListener('mouseup', function() {
     if (isResizing) {
         isResizing = false;
@@ -88,6 +87,46 @@ function onMapClick(e) {
 
 map.on('click', onMapClick);
 
+// city search form ajax
+$('#city-search form').on('submit', function(event) {
+    event.preventDefault(); // not letting the form submit in the traditional way
+
+    var city = $(this).find('input[name="city"]').val();
+
+    $.ajax({
+        url: '/',  // sending the form data to the same route
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: $(this).serialize(),
+        success: function (response) {
+            console.log('City form response received:', response);
+
+            if (response.data) {
+                const latitude = response.data.location_info.latitude;
+                const longitude = response.data.location_info.longitude;
+
+                if (currentMarker) {
+                    map.removeLayer(currentMarker);  // removing the previous marker
+                }
+
+                currentMarker = L.marker([latitude, longitude]).addTo(map);
+                map.setView([latitude, longitude], 10);
+
+                $('#Geographical').html(renderGeographicalInfo(response.data));
+                $('#Weather').html(renderWeatherInfo(response.data));
+                $('#Astronomical').html(renderAstronomicalInfo(response.data));
+            } else {
+                console.log('No data found in the response');  // Debugging info
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('Error occurred:', error);
+            $('#Geographical').html(`<div>Error: ${xhr.responseJSON.error}</div>`);
+        }
+    });
+});
+
+
 function openTab(evt, tabName) {
     var i, tabcontent;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -116,7 +155,7 @@ function renderGeographicalInfo(data) {
     if (data.location_info) {
         html += `<div class="info-section"><h3>Location Info</h3>`;
         Object.entries(data.location_info).forEach(([key, value]) => {
-            // Round latitude and longitude to 4 decimal places
+            // rounding latitude and longitude to 4 decimal places
             if (key.toLowerCase() === 'latitude' || key.toLowerCase() === 'longitude') {
                 value = parseFloat(value).toFixed(4);
             }
@@ -166,7 +205,7 @@ let precipitationChart = null;
 function createLineChart(canvasId, label, labels, data, backgroundColor, datasetLabel) {
     const ctx = document.getElementById(canvasId).getContext('2d');
 
-    // Destroy the previous chart if it exists
+    // deleting the previous chart
     if (temperatureChart) {
         temperatureChart.destroy();
     }
@@ -296,34 +335,41 @@ function renderAstronomicalInfo(data) {
     let html = '';
 
     if (data.astronomical_events) {
-        html += `<div class="info-section"><h3>Astronomical Events</h3>`;
 
         if (data.astronomical_events.visible_planets) {
-            html += `<h4>Visible Planets</h4>`;
+            html += '<div class="info-section">'
+            html += `<h3>Visible Planets</h3>`;
             data.astronomical_events.visible_planets.forEach(event => {
                 html += `<p>${event.planet} at ${new Date(event.time).toLocaleTimeString()}: Altitude ${event.altitude.toFixed(2)}, Azimuth ${event.azimuth.toFixed(2)}</p>`;
             });
+            html += `</div>`;
         }
 
         if (data.astronomical_events.conjunctions) {
-            html += `<h4>Conjunctions</h4>`;
+            html += '<div class="info-section">'
+            html += `<h3>Conjunctions</h3>`;
             data.astronomical_events.conjunctions.forEach(event => {
                 html += `<p>${event.description} at ${new Date(event.time).toLocaleTimeString()}</p>`;
             });
+            html += `</div>`;
         }
 
         if (data.astronomical_events.meteor_showers) {
-            html += `<h4>Meteor Showers</h4>`;
+            html += '<div class="info-section">'
+            html += `<h3>Meteor Showers</h3>`;
             data.astronomical_events.meteor_showers.forEach(event => {
                 html += `<p>${event.name} peak at ${new Date(event.peak).toLocaleDateString()}</p>`;
             });
+            html += `</div>`;
         }
 
         if (data.astronomical_events.moon_info) {
-            html += `<h4>Moon Info</h4>`;
+            html += '<div class="info-section">'
+            html += `<h3>Moon Info</h3>`;
             html += `<p>Moonrise: ${new Date(data.astronomical_events.moon_info.moonrise).toLocaleTimeString()}</p>`;
             html += `<p>Moonset: ${new Date(data.astronomical_events.moon_info.moonset).toLocaleTimeString()}</p>`;
             html += `<p>Moon Phase: ${data.astronomical_events.moon_info.moon_phase ? data.astronomical_events.moon_info.moon_phase : 'Unknown'}</p>`;
+            html += `</div>`;
         }
 
         html += `</div>`;
