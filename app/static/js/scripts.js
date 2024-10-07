@@ -1,9 +1,7 @@
 // scripts.js
 
 var map = L.map('map', {
-    worldCopyJump: false,
-    continuousWorld: false,
-    zoomControl: false
+    worldCopyJump: false, continuousWorld: false, zoomControl: false
 }).setView([54.5260, 15.2551], 4); // Center on Europe
 
 L.control.zoom({
@@ -21,12 +19,12 @@ const resizer = document.querySelector('.resizer');
 
 let isResizing = false;
 
-resizer.addEventListener('mousedown', function(e) {
+resizer.addEventListener('mousedown', function (e) {
     isResizing = true;
     document.body.style.cursor = 'ew-resize';  // changing cursor to the resize type
 });
 
-document.addEventListener('mousemove', function(e) {
+document.addEventListener('mousemove', function (e) {
     if (isResizing) {
         // new width of the sidebar
         const newWidth = window.innerWidth - e.clientX;
@@ -34,14 +32,14 @@ document.addEventListener('mousemove', function(e) {
         // resizing the sidebar
         if (newWidth > 200 && newWidth < 600) {
             sidebar.style.width = `${newWidth}px`;
-            resizer.style.left = `${window.innerWidth - newWidth -25}px`;
+            resizer.style.left = `${window.innerWidth - newWidth - 25}px`;
             map.style.marginRight = `${newWidth}px`;
         }
     }
 });
 
 // stop resizing when mouse is released
-document.addEventListener('mouseup', function() {
+document.addEventListener('mouseup', function () {
     if (isResizing) {
         isResizing = false;
         document.body.style.cursor = '';
@@ -88,7 +86,7 @@ function onMapClick(e) {
 map.on('click', onMapClick);
 
 // city search form ajax
-$('#city-search form').on('submit', function(event) {
+$('#city-search form').on('submit', function (event) {
     event.preventDefault(); // not letting the form submit in the traditional way
 
     var city = $(this).find('input[name="city"]').val();
@@ -211,10 +209,8 @@ function createLineChart(canvasId, label, labels, data, backgroundColor, dataset
     }
 
     temperatureChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
+        type: 'line', data: {
+            labels: labels, datasets: [{
                 label: datasetLabel,
                 data: data,
                 backgroundColor: backgroundColor,
@@ -222,19 +218,14 @@ function createLineChart(canvasId, label, labels, data, backgroundColor, dataset
                 borderWidth: 2,
                 fill: false
             }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
+        }, options: {
+            maintainAspectRatio: false, scales: {
                 x: {
-                    title: { display: true, text: 'Time' },
-                    ticks: { maxRotation: 45, minRotation: 45 }
-                },
-                y: {
-                    title: { display: true, text: label }
+                    title: {display: true, text: 'Time'}, ticks: {maxRotation: 45, minRotation: 45}
+                }, y: {
+                    title: {display: true, text: label}
                 }
-            },
-            plugins: {
+            }, plugins: {
                 legend: {
                     labels: {
                         boxWidth: 20
@@ -254,8 +245,7 @@ function createLineChartWithEmojis(canvasId, label, labels, data, emojiLabels, b
     }
 
     cloudCoverChart = new Chart(ctx, {
-        type: 'line',
-        data: {
+        type: 'line', data: {
             labels: labels.map((time, index) => time + ' ' + emojiLabels[index]), // Add emojis to labels
             datasets: [{
                 label: datasetLabel,
@@ -265,19 +255,14 @@ function createLineChartWithEmojis(canvasId, label, labels, data, emojiLabels, b
                 borderWidth: 2,
                 fill: false
             }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
+        }, options: {
+            maintainAspectRatio: false, scales: {
                 x: {
-                    title: { display: true, text: 'Time' },
-                    ticks: { maxRotation: 45, minRotation: 45 }
-                },
-                y: {
-                    title: { display: true, text: label }
+                    title: {display: true, text: 'Time'}, ticks: {maxRotation: 45, minRotation: 45}
+                }, y: {
+                    title: {display: true, text: label}
                 }
-            },
-            plugins: {
+            }, plugins: {
                 legend: {
                     labels: {
                         boxWidth: 20
@@ -297,29 +282,22 @@ function createBarChart(canvasId, label, labels, data, backgroundColor, datasetL
     }
 
     precipitationChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
+        type: 'bar', data: {
+            labels: labels, datasets: [{
                 label: datasetLabel,
                 data: data,
                 backgroundColor: backgroundColor,
                 borderColor: backgroundColor,
                 borderWidth: 2
             }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
+        }, options: {
+            maintainAspectRatio: false, scales: {
                 x: {
-                    title: { display: true, text: 'Time' },
-                    ticks: { maxRotation: 45, minRotation: 45 }
-                },
-                y: {
-                    title: { display: true, text: label }
+                    title: {display: true, text: 'Time'}, ticks: {maxRotation: 45, minRotation: 45}
+                }, y: {
+                    title: {display: true, text: label}
                 }
-            },
-            plugins: {
+            }, plugins: {
                 legend: {
                     labels: {
                         boxWidth: 20
@@ -358,7 +336,10 @@ function renderAstronomicalInfo(data) {
             html += '<div class="info-section">'
             html += `<h3>Meteor Showers</h3>`;
             data.astronomical_events.meteor_showers.forEach(event => {
-                html += `<p>${event.name} peak at ${new Date(event.peak).toLocaleDateString()}</p>`;
+                html += `<p><b>The ${event.name} meteor shower is active!</b> <br>This meteor shower has the 
+                <a href="https://en.wikipedia.org/w/index.php?title=Zenithal_hourly_rate&useskin=vector">ZHR</a> of ${event.zhr}<br><br>Shower starts: ${new Date(event.start).toLocaleDateString()}
+                            <br><br> Shower peaks: ${new Date(event.peak).toLocaleDateString()}
+                            <br><br> Shower ends: ${new Date(event.end).toLocaleDateString()}</p>`;
             });
             html += `</div>`;
         }
