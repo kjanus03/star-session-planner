@@ -16,6 +16,40 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 
 var currentMarker = null;
 
+const sidebar = document.querySelector('.sidebar');
+const resizer = document.querySelector('.resizer');
+
+let isResizing = false;
+
+resizer.addEventListener('mousedown', function(e) {
+    isResizing = true;
+    document.body.style.cursor = 'ew-resize';  // Change cursor to resizing mode
+});
+
+// Mouse move event to dynamically resize the sidebar
+document.addEventListener('mousemove', function(e) {
+    if (isResizing) {
+        // Calculate the new width for the sidebar based on the mouse position
+        const newWidth = window.innerWidth - e.clientX;
+
+        // Apply the new width to the sidebar (limit the width to avoid overlap)
+        if (newWidth > 200 && newWidth < 600) {
+            sidebar.style.width = `${newWidth}px`;
+            resizer.style.left = `${window.innerWidth - newWidth -25}px`;
+            map.style.marginRight = `${newWidth}px`;
+        }
+    }
+});
+
+// Mouse up event to stop resizing
+document.addEventListener('mouseup', function() {
+    if (isResizing) {
+        isResizing = false;
+        document.body.style.cursor = '';
+    }
+});
+
+
 function onMapClick(e) {
     console.log("Map clicked!");
     var lat = e.latlng.lat;
@@ -112,38 +146,151 @@ function renderGeographicalInfo(data) {
 
 
 function renderWeatherInfo(data) {
-    let html = '';
+    // Extract hourly data
+    const hours = data.hourly_weather.map(hour => new Date(hour.date).toLocaleTimeString());
+    const temperatures = data.hourly_weather.map(hour => hour.temperature_2m);
+    const cloudCover = data.hourly_weather.map(hour => hour.cloud_cover);
+    const precipitation = data.hourly_weather.map(hour => hour.precipitation);
+    const cloudCoverEmojis = data.hourly_weather.map(hour => hour.cloud_cover_emoji);
 
-    if (data.current_weather) {
-        html += `<div class="info-section"><h3>Current Weather</h3>`;
-        html += `<div class="weather-item"><p><strong>Cloud Cover:</strong> ${data.current_weather.cloud_cover}% ${data.current_weather.cloud_cover_emoji}</p></div>`;
-
-        html += `<div class="weather-item"><p><strong>Time of Day:</strong> ${data.current_weather.is_day ? 'Day' : 'Night'}</p></div>`;
-        html += `<div class="weather-item"><p><strong>Precipitation:</strong> ${data.current_weather.precipitation} mm</p></div>`;
-        html += `<div class="weather-item"><p><strong>Temperature:</strong> ${data.current_weather.temperature_2m.toFixed(2)} °C</p></div>`;
-        html += `<div class="weather-item"><p><strong>Time:</strong> ${new Date(data.current_weather.time * 1000).toLocaleString()}</p></div>`;
-        html += `</div>`;
-    }
-
-    if (data.hourly_weather) {
-        html += `<div class="info-section"><h3>Hourly Weather</h3>`;
-        data.hourly_weather.forEach(hour => {
-            html += `<p>${new Date(hour.date).toLocaleString()}: ${hour.temperature_2m}°C, 
-                    Precipitation: ${hour.precipitation}mm, Cloud Cover: ${hour.cloud_cover}% ${hour.cloud_cover_emoji}</p>`;
-        });
-        html += `</div>`;
-    }
-
-    if (data.daily_weather) {
-        html += `<div class="info-section"><h3>Daily Weather</h3>`;
-        data.daily_weather.forEach(day => {
-            html += `<p>${new Date(day.date).toLocaleDateString()}: Precipitation Probability: ${day.precipitation_probability_max}%</p>`;
-        });
-        html += `</div>`;
-    }
-
-    return html;
+    createLineChart('temperatureChart', 'Temperature (°C)', hours, temperatures, 'rgba(255, 99, 132, 0.6)', 'Temperature');
+    createLineChartWithEmojis('cloudCoverChart', 'Cloud Cover (%)', hours, cloudCover, cloudCoverEmojis, 'rgba(54, 162, 235, 0.6)', 'Cloud Cover');
+    createBarChart('precipitationChart', 'Precipitation (mm)', hours, precipitation, 'rgba(75, 192, 192, 0.6)', 'Precipitation');
 }
+
+// keeping track of the charts
+let temperatureChart = null;
+let cloudCoverChart = null;
+let precipitationChart = null;
+
+function createLineChart(canvasId, label, labels, data, backgroundColor, datasetLabel) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
+    // Destroy the previous chart if it exists
+    if (temperatureChart) {
+        temperatureChart.destroy();
+    }
+
+    temperatureChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: datasetLabel,
+                data: data,
+                backgroundColor: backgroundColor,
+                borderColor: backgroundColor,
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Time' },
+                    ticks: { maxRotation: 45, minRotation: 45 }
+                },
+                y: {
+                    title: { display: true, text: label }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        boxWidth: 20
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createLineChartWithEmojis(canvasId, label, labels, data, emojiLabels, backgroundColor, datasetLabel) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
+    // deleting the previous chart
+    if (cloudCoverChart) {
+        cloudCoverChart.destroy();
+    }
+
+    cloudCoverChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels.map((time, index) => time + ' ' + emojiLabels[index]), // Add emojis to labels
+            datasets: [{
+                label: datasetLabel,
+                data: data,
+                backgroundColor: backgroundColor,
+                borderColor: backgroundColor,
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Time' },
+                    ticks: { maxRotation: 45, minRotation: 45 }
+                },
+                y: {
+                    title: { display: true, text: label }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        boxWidth: 20
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createBarChart(canvasId, label, labels, data, backgroundColor, datasetLabel) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
+    // deleting the previous chart
+    if (precipitationChart) {
+        precipitationChart.destroy();
+    }
+
+    precipitationChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: datasetLabel,
+                data: data,
+                backgroundColor: backgroundColor,
+                borderColor: backgroundColor,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Time' },
+                    ticks: { maxRotation: 45, minRotation: 45 }
+                },
+                y: {
+                    title: { display: true, text: label }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        boxWidth: 20
+                    }
+                }
+            }
+        }
+    });
+}
+
 
 function renderAstronomicalInfo(data) {
     let html = '';

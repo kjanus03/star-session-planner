@@ -33,23 +33,39 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-    width: 300px;
+    width: 300px; /* Initial width */
     height: calc(100vh - 70px);
     background-color: white;
     overflow-y: auto;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
     padding: 10px;
     position: fixed;
     right: 0;
     bottom: 0;
-    z-index: 1001; /* Ensure sidebar is above map */
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    max-width: 600px;
+}
+
+/* Resizable handle for the sidebar */
+.resizer {
+    width: 5px;
+    background-color: #333;
+    cursor: ew-resize;
+    position: fixed;
+    left: calc(100% - 325px);
+    top: 0;
+    bottom: 0;
+    z-index: 1002;
 }
 
 /* Map Styles */
 #map {
     flex: 1;
-    margin-right: 300px; /* Create space for the sidebar */
-    height: calc(100vh - 40px); /* Make sure the map fills the remaining height */
+    margin-right: 300px;
+    height: calc(100vh - 40px);
 }
 
 .leaflet-bottom.leaflet-left .leaflet-control-zoom {
@@ -99,4 +115,11 @@ select#infoDropdown {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+canvas {
+    width: 100%;
+    max-height: 350px;
+    margin-bottom: 20px;
+}
+
 

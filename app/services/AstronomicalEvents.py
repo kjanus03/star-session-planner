@@ -89,30 +89,33 @@ class AstronomicalEvents:
         return conjunctions
 
     @lru_cache(maxsize=128)
-    def check_meteor_showers(self, date: datetime) -> list[str]:
+    def check_meteor_showers(self, date: datetime) -> list[dict[str, Any]]:
         """
         Check for meteor showers at a given date.
         :param date: Datetime object representing date for which to check meteor showers
         :return: List of meteor showers active on the given date
         """
         self.logger.info("Checking for meteor showers...")
-        meteor_showers = {'Quadrantids': {'start': (1, 1), 'end': (1, 5), 'peak': [(1, 3)]},
-            'Lyrids': {'start': (4, 16), 'end': (4, 25), 'peak': [(4, 22)]},
-            'Eta Aquariids': {'start': (4, 19), 'end': (5, 28), 'peak': [(5, 6)]},
-            'Delta Aquariids': {'start': (7, 12), 'end': (8, 23), 'peak': [(7, 28), (7, 29), (7, 30)]},
-            'Perseids': {'start': (7, 17), 'end': (8, 24), 'peak': [(8, 12), (8, 13)]},
-            'Orionids': {'start': (10, 2), 'end': (11, 7), 'peak': [(10, 21)]},
-            'Leonids': {'start': (11, 6), 'end': (11, 30), 'peak': [(11, 17)]},
-            'Geminids': {'start': (12, 4), 'end': (12, 17), 'peak': [(12, 13), (12, 14)]},
-            'Ursids': {'start': (12, 17), 'end': (12, 26), 'peak': [(12, 22)]}}
+        year = date.year
+        meteor_showers = {'Quadrantids': {'start': (year, 1, 1), 'end': (year, 1, 5), 'peak': [(year, 1, 3)]},
+            'Lyrids': {'start': (year, 4, 16), 'end': (year, 4, 25), 'peak': [(year, 4, 22)]},
+            'Eta Aquariids': {'start': (year, 4, 19), 'end': (year, 5, 28), 'peak': [(year, 5, 6)]},
+            'Delta Aquariids': {'start': (year, 7, 12), 'end': (year, 8, 23), 'peak': [(year, 7, 28), (year, 7, 29), (year, 7, 30)]},
+            'Perseids': {'start': (year, 7, 17), 'end': (year, 8, 24), 'peak': [(year, 8, 12), (year, 8, 13)]},
+            'Orionids': {'start': (year, 10, 2), 'end': (year, 11, 7), 'peak': [(year, 10, 21)]},
+            'Leonids': {'start': (year, 11, 6), 'end': (year, 11, 30), 'peak': [(year, 11, 17)]},
+            'Geminids': {'start': (year, 12, 4), 'end': (year, 12, 17), 'peak': [(year, 12, 13), (year, 12, 14)]},
+            'Ursids': {'start': (year, 12, 17), 'end': (year, 12, 26), 'peak': [(year, 12, 22)]}}
 
         showers = []
         for name, info in meteor_showers.items():
-            start_date = datetime(date.year, *info['start'])
-            end_date = datetime(date.year, *info['end'])
+            start_date = datetime(*info['start'])
+            end_date = datetime(*info['end'])
             if start_date <= date <= end_date:
-                showers.append(name)
-        self.logger.info("Meteor showers checked successfully.")
+                shower_info =  meteor_showers[name]
+                shower_info['name'] = name
+
+                showers.append(meteor_showers[name])
         return showers
 
     @lru_cache(maxsize=128)
