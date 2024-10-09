@@ -30,6 +30,9 @@ def index():
 
     return render_template('index.html', form=form)
 
+@main.route('/about')
+def about():
+    return render_template('about.html')
 
 def get_coordinates_from_city(city_name):
     nominatim_client = NominatimClient()
@@ -37,7 +40,6 @@ def get_coordinates_from_city(city_name):
 
 # Create a wrapper function to process coordinates from the city form
 def process_coordinates_with_city(latitude, longitude):
-    # This reuses the process_coordinates logic with latitude and longitude from the form
     return process_coordinates_with_lat_lon(latitude, longitude)
 
 def process_coordinates_with_lat_lon(latitude, longitude):
@@ -102,7 +104,7 @@ def process_coordinates():
         logging.info(f"Formatted JSON response correctly")
 
 
-        return jsonify({'formatted_result': formatted_result, 'data': result})
+        return jsonify({'formatted_result': 'aaa', 'data': result})
 
     except Exception as e:
         logging.error(f"Error processing coordinates: {e}")

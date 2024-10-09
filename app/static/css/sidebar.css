@@ -47,11 +47,15 @@
     border-bottom: 1px solid #ccc;
 }
 
-.tabcontent {
+.tabcontent{
     display: none;
     padding: 6px 12px;
     border-top: none;
     margin-top: 10px;
+}
+
+.sidebar a {
+    color: #333;
 }
 
 .info-section {

@@ -1,7 +1,7 @@
 from functools import lru_cache
 
 from skyfield.api import load, Topos
-from skyfield.almanac import find_discrete, risings_and_settings, moon_phases
+from skyfield.almanac import find_discrete, risings_and_settings, moon_phases, MOON_PHASES
 from datetime import datetime
 from typing import Any
 import logging
@@ -128,9 +128,9 @@ class AstronomicalEvents:
         self.logger.info("Getting moon information...")
         t0 = self.ts.utc(date.year, date.month, date.day)
         t1 = self.ts.utc(date.year, date.month, date.day, 23, 59, 59)
+
         f = risings_and_settings(self.eph, self.eph['moon'], self.location)
         moonrise_set_times, is_moonrise = find_discrete(t0, t1, f)
-        moon_phase_times, moon_phases_list = find_discrete(t0, t1, moon_phases(self.eph))
 
         moonrise = None
         moonset = None
@@ -140,11 +140,8 @@ class AstronomicalEvents:
             else:
                 moonset = time.utc_iso()
 
-        moon_phase = None
-        for time, phase in zip(moon_phase_times, moon_phases_list):
-            if t0.tt <= time.tt <= t1.tt:
-                moon_phase = phase
-
+        moon_phase = MOON_PHASES[moon_phases(self.eph)(t0)]
+        print(moon_phase)
 
         self.logger.info("Moon information retrieved successfully.")
         return {'moonrise': moonrise, 'moonset': moonset, 'moon_phase': moon_phase}

@@ -98,7 +98,6 @@ class JSONFormatter:
             f"Temperature: {self.convert_to_serializable(current_weather['temperature_2m']):.2f} °C",
             f"Time: {datetime.datetime.fromtimestamp(self.convert_to_serializable(current_weather['time'])).strftime('%d.%m.%Y, %H:%M:%S')}"
         ]
-        print(weather)
         return f"Current Weather:\n" + "\n".join(weather)
 
     def format_hourly_weather(self, hourly_weather: list[dict[str, Any]]) -> str:
@@ -117,7 +116,6 @@ class JSONFormatter:
                 f"Cloud Cover: {cloud_cover}"
             )
             weather_entries.append(entry)
-        print(weather_entries)
         return "Hourly Weather:\n" + "\n".join(weather_entries)
 
     def format_daily_weather(self, daily_weather: list[dict[str, Any]]) -> str:
@@ -166,17 +164,14 @@ class JSONFormatter:
         event_strings = []
         for key, value in events.items():
             if isinstance(value, list):
-                # Convert all items in the list to serializable format
                 serializable_items = [self.convert_to_serializable(item) for item in value]
 
                 if any(isinstance(item, dict) for item in serializable_items):
-                    # If the list contains dictionaries, format them nicely
                     event_strings.append(
                         f"{key.replace('_', ' ').capitalize()}:\n" +
                         "\n".join([json.dumps(item, indent=4) for item in serializable_items])
                     )
                 else:
-                    # If the list contains simple values, just join them into a string
                     event_strings.append(
                         f"{key.replace('_', ' ').capitalize()}: {', '.join(map(str, serializable_items))}")
             elif isinstance(value, dict):

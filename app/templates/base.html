@@ -8,8 +8,14 @@
 </head>
 <body>
     <header class="topbar">
-        <h1>Star Session Planner</h1>
-
+        <div class="topbar-left">
+            <h1><a href="{{ url_for('main.index') }}" style="text-decoration:none">Star Session Planner</a></h1>
+        </div>
+        <nav class="topbar-nav">
+            <ul>
+                <li><a href="{{ url_for('main.about') }}">About</a></li>
+            </ul>
+        </nav>
     </header>
 
     <div id="content">

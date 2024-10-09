@@ -16,6 +16,10 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
+    <!-- Font Awesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
@@ -43,6 +47,7 @@
     <div id="sidebar" class="sidebar">
         <div class="resizer"></div>
         <h2>Stargazing Info</h2>
+
         <label for="infoDropdown">Pick the type of information:</label>
         <select id="infoDropdown" onchange="openTab(event, this.value)">
             <option value="Geographical">Geographical</option>
@@ -53,17 +58,17 @@
         <div id="Geographical" class="tabcontent"></div>
         <div id="Weather" class="tabcontent">
             <div class="info-section">
-                <h3>Temperature</h3>
+                <h3><i class="fas fa-temperature-high"></i> Temperature</h3>
                 <canvas id="temperatureChart"></canvas>
             </div>
 
             <div class="info-section">
-                <h3>Cloud Cover</h3>
+                <h3><i class="fas fa-cloud"></i> Cloud Cover</h3>
                 <canvas id="cloudCoverChart"></canvas>
             </div>
 
             <div class="info-section">
-                <h3>Precipitation</h3>
+                <h3> <i class="fas fa-cloud-showers-heavy"></i> Precipitation</h3>
                 <canvas id="precipitationChart"></canvas>
             </div>
         </div>
