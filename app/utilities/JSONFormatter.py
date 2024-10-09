@@ -176,7 +176,9 @@ class JSONFormatter:
                         f"{key.replace('_', ' ').capitalize()}: {', '.join(map(str, serializable_items))}")
             elif isinstance(value, dict):
                 # If the value is a dictionary, convert it and serialize it
+                print(value, type(value))
                 serializable_value = self.convert_to_serializable(value)
+
                 event_strings.append(
                     f"{key.replace('_', ' ').capitalize()}:\n" + json.dumps(serializable_value, indent=4)
                 )

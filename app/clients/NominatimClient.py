@@ -1,4 +1,6 @@
 import logging
+from functools import lru_cache
+
 import requests
 
 class NominatimClient:
@@ -11,6 +13,7 @@ class NominatimClient:
         self.base_url = ""
 
 
+    @lru_cache(maxsize=128)
     def get_lat_lon(self, city_name: str) -> dict[str, float]:
         """
         Get latitude and longitude for a given city name.

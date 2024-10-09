@@ -144,16 +144,16 @@ function renderGeographicalInfo(data) {
 
     if (data.terrain_types) {
         if (data.terrain_types !== 'Unknown terrain type'){
-            html += `<div class="info-section"><h3><i class="fas fa-tree"></i> Terrain Types</h3><p>${data.terrain_types}</p></div>`;
+            html += `<div class="info-section"><h3><i class="fas fa-tree" title="The type of terrain that may be expected at the chosen location"></i> Terrain Types</h3><p>${data.terrain_types}</p></div>`;
         }
     }
 
     if (data.elevation) {
-        html += `<div class="info-section"><h3><i class="fas fa-mountain"></i> Elevation</h3><p>${data.elevation} meters</p></div>`;
+        html += `<div class="info-section"><h3><i class="fas fa-mountain" title="The elevation above the sea level"></i> Elevation</h3><p>${data.elevation} meters</p></div>`;
     }
 
     if (data.location_info) {
-        html += `<div class="info-section"><h3><i class="fas fa-map-marked-alt"></i> Location Info</h3>`;
+        html += `<div class="info-section"><h3><i class="fas fa-map-marked-alt" title="The information about the chosen location"></i> Location</h3>`;
         Object.entries(data.location_info).forEach(([key, value]) => {
             // rounding latitude and longitude to 4 decimal places
             if (key.toLowerCase() === 'latitude' || key.toLowerCase() === 'longitude') {
@@ -165,7 +165,7 @@ function renderGeographicalInfo(data) {
     }
 
     if (data.urban_centers) {
-        html += `<div class="info-section"><h3><i class="fas fa-map-signs"></i> Urban Centers</h3>`;
+        html += `<div class="info-section"><h3><i class="fas fa-map-signs" title="The nearby urban centers"></i> Urban Centers</h3>`;
         data.urban_centers.forEach(center => {
             html += `<p>${center.name} (${Number(center.latitude.toFixed(2))}, ${Number(center.longitude.toFixed(2))}) ${center.distance.toFixed(2)} km away</p>`;
         });
@@ -174,7 +174,7 @@ function renderGeographicalInfo(data) {
 
 
     if (data.nearest_urban_center) {
-        html += `<div class="info-section"><h3><i class="fas fa-city"></i> Nearest Urban Center</h3><p>${data.nearest_urban_center.name} 
+        html += `<div class="info-section"><h3><i class="fas fa-city" title="The nearest urban center"></i> Nearest Urban Center</h3><p>${data.nearest_urban_center.name} 
                 (${data.nearest_urban_center.latitude.toFixed(2)}, 
                 ${data.nearest_urban_center.longitude.toFixed(2)}) is ${data.distance_from_urban_center.toFixed(2)} kilometers away.</p></div>`;
     }
@@ -315,18 +315,27 @@ function renderAstronomicalInfo(data) {
 
     if (data.astronomical_events) {
 
+        if (data.astronomical_events.sun_info) {
+            html += `<div class="info-section"><h3><i class="fas fa-sun" title="The sunrise and susnet times"></i> Sun</h3>`;
+            html += `<p>Sunrise: ${data.astronomical_events.sun_info.sunrise}</p>`;
+            html += `<p>Sunset: ${data.astronomical_events.sun_info.sunset}</p>`;
+            html += `</div>`;
+        }
+
         if (data.astronomical_events.visible_planets) {
             html += '<div class="info-section">'
-            html += `<h3><i class="fas fa-globe"></i> Visible Planets</h3>`;
+            html += `<h3><i class="fas fa-globe" title="The planets visible after sunset and before sunrise"></i> Visible Planets</h3>`;
             data.astronomical_events.visible_planets.forEach(event => {
-                html += `<p>${event.planet} at ${new Date(event.time).toLocaleTimeString()}: Altitude ${event.altitude.toFixed(2)}, Azimuth ${event.azimuth.toFixed(2)}</p>`;
+                html += `<p>${event.planet} is visible!<br>Rises at: ${new Date(event.rise_time).toLocaleTimeString()}
+                <br>Rise altitude ${event.rise_altitude.toFixed(2)}
+                Rise azimuth ${event.rise_azimuth.toFixed(2)}</p>`;
             });
             html += `</div>`;
         }
 
         if (data.astronomical_events.conjunctions) {
             html += '<div class="info-section">'
-            html += `<h3><i class="fas fa-route"> </i>Conjunctions</h3>`;
+            html += `<h3><i class="fas fa-route" title="The planetary conjunctions"></i> Conjunctions</h3>`;
             data.astronomical_events.conjunctions.forEach(event => {
                 html += `<p>${event.description} at ${new Date(event.time).toLocaleTimeString()}</p>`;
             });
@@ -335,7 +344,7 @@ function renderAstronomicalInfo(data) {
 
         if (data.astronomical_events.meteor_showers) {
             html += '<div class="info-section">'
-            html += `<h3><i class="fas fa-meteor"></i> Meteor Showers</h3>`;
+            html += `<h3><i class="fas fa-meteor" title="The meteor showers active today"></i> Meteor Showers</h3>`;
             data.astronomical_events.meteor_showers.forEach(event => {
                 html += `<p><b>The ${event.name} meteor shower is active!</b> <br>This meteor shower has the 
                 <a href="https://en.wikipedia.org/w/index.php?title=Zenithal_hourly_rate&useskin=vector">ZHR</a> of ${event.zhr}<br><br>Shower starts: ${new Date(event.start).toLocaleDateString()}
@@ -347,7 +356,7 @@ function renderAstronomicalInfo(data) {
 
         if (data.astronomical_events.moon_info) {
             html += '<div class="info-section">'
-            html += `<h3><i class="fas fa-moon"></i> Moon</h3>`;
+            html += `<h3><i class="fas fa-moon" title="Information about the Moon"></i> Moon</h3>`;
             html += `<p>Moonrise: ${new Date(data.astronomical_events.moon_info.moonrise).toLocaleTimeString()}</p>`;
             html += `<p>Moonset: ${new Date(data.astronomical_events.moon_info.moonset).toLocaleTimeString()}</p>`;
             html += `<p>Moon Phase: ${data.astronomical_events.moon_info.moon_phase ? data.astronomical_events.moon_info.moon_phase : 'Unknown'}</p>`;

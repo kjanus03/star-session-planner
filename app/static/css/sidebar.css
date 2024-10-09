@@ -55,7 +55,7 @@
 }
 
 .sidebar a {
-    color: #333;
+    color: #292A32;
 }
 
 .info-section {
@@ -79,4 +79,17 @@ select#infoDropdown {
     background-color: #f1f1f1;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+/* Sidebar h2 styles */
+.sidebar h2 i {
+    margin-right: 10px;
+    color: #292A32; /* Icon color */
+}
+
+/* Sidebar h3 styles with icons */
+.info-section h3 i {
+    margin-right: 8px;
+    color: #292A32;
+    font-size: 1.1rem;
 }

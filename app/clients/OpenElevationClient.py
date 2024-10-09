@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Union
 
 import requests
@@ -9,6 +10,7 @@ class OpenElevationClient:
     """
     Client for fetching elevation data from the Open-Elevation API.
     """
+    @lru_cache(maxsize=128)
     def __init__(self, latitude: float, longitude: float, cache_expiry: int = 3600):
         """
         Constructor for the OpenElevationClient class.

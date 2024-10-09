@@ -72,14 +72,12 @@ class OpenMeteoClient:
         if self.response is None:
             self.logger.error("No response data available. Please fetch the weather data first.")
             raise ValueError("No response data available. Please fetch the weather data first.")
+        print(self.response)
 
         return {
             "latitude": self.response.Latitude(),
             "longitude": self.response.Longitude(),
-            "elevation": self.response.Elevation(),
-            "timezone": self.response.Timezone(),
-            "timezone_abbreviation": self.response.TimezoneAbbreviation(),
-            "utc_offset_seconds": self.response.UtcOffsetSeconds()
+            "timezone": [self.response.Timezone(), self.response.TimezoneAbbreviation()]
         }
 
     def get_current_weather(self) -> dict:
@@ -128,25 +126,28 @@ class OpenMeteoClient:
         }
         return pd.DataFrame(data=hourly_data)
 
-    def get_daily_weather(self) -> pd.DataFrame:
+    def get_daily_weather(self) -> dict:
         """
         Get daily weather information from the response attribute.
 
-        :return: DataFrame with daily weather information
+        :return: A dictionary with daily weather information, suitable for JSON serialization.
         """
+        self.logger.info("Getting daily weather information")
         if self.response is None:
             self.logger.error("No response data available. Please fetch the weather data first.")
             raise ValueError("No response data available. Please fetch the weather data first.")
 
         daily = self.response.Daily()
+
         daily_data = {
-            "date": pd.date_range(start=pd.to_datetime(daily.Time(), unit="s", utc=True),
-                                  end=pd.to_datetime(daily.TimeEnd(), unit="s", utc=True),
-                                  freq=pd.Timedelta(seconds=daily.Interval()),
-                                  inclusive="left"),
-            "sunrise": daily.Variables(0).ValuesAsNumpy(),
-            "sunset": daily.Variables(1).ValuesAsNumpy(),
-            "precipitation_probability_max": daily.Variables(2).ValuesAsNumpy()
+            "date": pd.date_range(
+                start=pd.to_datetime(daily.Time(), unit="s", utc=True),
+                end=pd.to_datetime(daily.TimeEnd(), unit="s", utc=True),
+                freq=pd.Timedelta(seconds=daily.Interval()),
+                inclusive="left"
+            ).strftime('%Y-%m-%dT%H:%M:%SZ').tolist(),  # Convert to string and then list
+            "precipitation_probability_max": [float(i) for i in list(daily.Variables(2).ValuesAsNumpy())]  # Convert ndarray to list
         }
-        return pd.DataFrame(data=daily_data)
+
+        return daily_data
 
