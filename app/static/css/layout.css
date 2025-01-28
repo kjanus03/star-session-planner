@@ -1,26 +1,21 @@
-/*layout.css*/
-body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    font-family: Montserrat, sans-serif;
-    display: flex;
-    flex-direction: column;
-}
-
+/* layout.css */
 #content {
     flex: 1;
     display: flex;
-    margin-top: 40px
+    margin-top: 60px;
 }
 
-/* Map Styles */
 #map {
     flex: 1;
-    position: relative;
-    height: calc(100vh - 40px);
+    height: calc(100vh - 60px);
+    background: #f0f2f5;
+    transition: margin-right 0.3s ease;
 }
 
 .leaflet-bottom.leaflet-left .leaflet-control-zoom {
-    margin-bottom: 60px;
+    margin-bottom: 80px;
+    margin-left: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

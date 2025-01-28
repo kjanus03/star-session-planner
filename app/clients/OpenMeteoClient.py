@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import openmeteo_requests
 import requests_cache
+import os
 import pandas as pd
 from retry_requests import retry
 import logging
@@ -28,10 +31,13 @@ class OpenMeteoClient:
         self.latitude = latitude
         self.longitude = longitude
         self.timezone = get_timezone_from_coordinates(latitude, longitude)
+        self.logger.info(f"Timezone for coordinates ({latitude}, {longitude}): {self.timezone}")
 
         # Setup the Open-Meteo API client with cache and retry on error
-        cache_session = requests_cache.CachedSession('.cache', expire_after=cache_expiry)
-        retry_session = retry(cache_session, retries=retries, backoff_factor=backoff_factor)
+        CACHE_DIR = Path(os.getcwd()) / "cache"  # Creates cache in the project's root
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        self.session = requests_cache.CachedSession(str(CACHE_DIR / "meteo_cache"), expire_after=cache_expiry)
+        retry_session = retry(self.session, retries=retries, backoff_factor=backoff_factor)
         self.client = openmeteo_requests.Client(session=retry_session)
         self.url = "https://api.open-meteo.com/v1/forecast"
         self.params = {

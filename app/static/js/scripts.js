@@ -56,38 +56,110 @@ function onMapClick(e) {
         map.removeLayer(currentMarker);
     }
 
+    $('#loadingMessage').show();
+
     currentMarker = L.marker([lat, lon]).addTo(map);
 
     console.log(`Clicked on Latitude: ${lat}, Longitude: ${lon}`);  // Debugging info
+    // log the type of lat and lon
+    console.log(`Latitude type: ${typeof lat}, Longitude type: ${typeof lon}`);  // Debugging info
 
     $.ajax({
-        url: '/process_coordinates',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({latitude: lat, longitude: lon}),
-        success: function (response) {
-            console.log('Response received:', response);  // Debugging info
+    url: '/process_coordinates',
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({ latitude: lat, longitude: lon }),
+    success: function (response) {
+        console.log('Response received:', response);  // Debugging info
 
-            if (response.data) {
-                $('#Geographical').html(renderGeographicalInfo(response.data));
-                $('#Weather').html(renderWeatherInfo(response.data));
-                $('#Astronomical').html(renderAstronomicalInfo(response.data));
-            } else {
-                console.log('No data found in the response');  // Debugging info
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error('Error occurred:', error);
-            $('#Geographical').html(`<div>Error: ${xhr.responseJSON.error}</div>`);
+        if (response.data) {
+            $('#Geographical').html(renderGeographicalInfo(response.data));
+            $('#Weather').html(renderWeatherInfo(response.data));
+            $('#Astronomical').html(renderAstronomicalInfo(response.data));
+
+            $('#loadingMessage').hide();
+            $('#infoDropdown').prop('disabled', false);
+        } else {
+            console.log('No data found in the response');  // Debugging info
         }
-    });
+    },
+    error: function (xhr, status, error) {
+       console.error('Error occurred:', error);
+       console.log('xhr.status:', xhr.status); // Log the HTTP status code
+       console.log('xhr.responseText:', xhr.responseText); // Log the server's response
+
+       let errorMessage = 'An unknown error occurred.';
+
+       if (xhr.responseJSON && xhr.responseJSON.error) {
+           errorMessage = xhr.responseJSON.error;
+       } else if (xhr.status === 500) {  //Specific handling for 500
+           errorMessage = 'Internal Server Error. Please try again later.';
+           // Optionally, include more detail if available from xhr.responseText
+           if (xhr.responseText) {
+              try {
+                 const parsedError = JSON.parse(xhr.responseText);
+                 if(parsedError && parsedError.message) {
+                   errorMessage = parsedError.message;
+                 }
+              } catch (e) {
+                  // The responseText isn't valid JSON
+              }
+           }
+       } else if (xhr.status === 404) {
+           errorMessage = "Resource not found.";
+       }
+       // ... other status code handling ...
+
+
+       $('#Geographical').html(`<div>Error: ${errorMessage}</div>`);
+   }
+});
+
 }
 
 map.on('click', onMapClick);
 
+// Toggle search form
+document.querySelector('.search-toggle').addEventListener('click', function(e) {
+    e.stopPropagation();
+    const form = document.querySelector('#city-search form');
+    form.classList.toggle('collapsed');
+
+    if (form.classList.contains('collapsed')) {
+        setTimeout(() => {
+            form.style.display = 'none';
+        }, 300);
+    } else {
+        form.style.display = 'flex';
+    }
+});
+
+// Close form when clicking outside
+document.addEventListener('click', function(e) {
+    const form = document.querySelector('#city-search form');
+    const toggle = document.querySelector('.search-toggle');
+
+    if (!form.contains(e.target) && !toggle.contains(e.target)) {
+        form.classList.add('collapsed');
+        setTimeout(() => {
+            form.style.display = 'none';
+        }, 300);
+    }
+});
+
 // city search form ajax
 $('#city-search form').on('submit', function (event) {
     event.preventDefault(); // not letting the form submit in the traditional way
+
+    // Show loading message
+    $('#loadingMessage').show();
+
+    // Hide loading message and enable the dropdown after data is received
+    $('#loadingMessage').hide();
+    $('#infoDropdown').prop('disabled', false);
+
+    // Disable the dropdown until the new data is loaded
+    $('#infoDropdown').prop('disabled', true);
 
     var city = $(this).find('input[name="city"]').val();
 
@@ -113,6 +185,8 @@ $('#city-search form').on('submit', function (event) {
                 $('#Geographical').html(renderGeographicalInfo(response.data));
                 $('#Weather').html(renderWeatherInfo(response.data));
                 $('#Astronomical').html(renderAstronomicalInfo(response.data));
+
+                $('#infoDropdown').prop('disabled', false);
             } else {
                 console.log('No data found in the response');  // Debugging info
             }
@@ -120,9 +194,12 @@ $('#city-search form').on('submit', function (event) {
         error: function (xhr, status, error) {
             console.error('Error occurred:', error);
             $('#Geographical').html(`<div>Error: ${xhr.responseJSON.error}</div>`);
+
+            $('#infoDropdown').prop('disabled', true);
         }
     });
 });
+
 
 
 function openTab(evt, tabName) {

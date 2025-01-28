@@ -1,95 +1,116 @@
 /* sidebar.css */
+/* sidebar.css */
 .sidebar {
-    width: 300px;
-    height: calc(100vh - 70px);
-    background-color: #ffffff;
+    width: 350px;
+    height: calc(100vh - 61px);
+    background: var(--background-secondary);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+    box-shadow: var(--shadow-lg);
+    padding: 0 var(--space-md);
     position: fixed;
     right: 0;
     bottom: 0;
     z-index: 1001;
-    display: flex;
-    flex-direction: column;
-    min-width: 200px;
-    max-width: 600px;
+    border-left: var(--border-light);
+    transition: var(--transition-normal);
 }
 
 .sidebar h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    margin-bottom: 15px;
-    color: #333;
+    margin-bottom: var(--space-md);
+    position: relative;
+    padding-bottom: var(--space-xs);
 }
 
-.info-section h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #444;
-}
-
-/* Resizable handle for the sidebar */
-.resizer {
-    width: 5px;
-    background-color: #333;
-    cursor: ew-resize;
-    position: fixed;
-    left: calc(100% - 325px);
-    top: 50px;
+.sidebar h2::after {
+    content: '';
+    position: absolute;
     bottom: 0;
-    z-index: 1002;
-}
-
-/* Tab and content styles */
-.tab {
-    overflow: hidden;
-    border-bottom: 1px solid #ccc;
-}
-
-.tabcontent{
-    display: none;
-    padding: 6px 12px;
-    border-top: none;
-    margin-top: 10px;
-}
-
-.sidebar a {
-    color: #292A32;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: var(--primary-gradient);
+    border-radius: 2px;
 }
 
 .info-section {
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eaeaea;
-    padding-bottom: 10px;
+    margin-bottom: var(--space-md);
+    padding: var(--space-sm);
+    background: var(--background-secondary);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-fast);
 }
 
-label[for="infoDropdown"] {
-    font-size: 1rem;
-    color: #333;
-    margin-bottom: 8px;
-    display: block;
+.info-section:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.info-section h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.info-section h3 i {
+    font-size: 1.2rem;
+    color: #4a00e0;
+    width: 25px;
+    text-align: center;
 }
 
 select#infoDropdown {
     width: 100%;
-    padding: 8px;
-    margin: 10px 0;
+    padding: 0.8rem;
+    margin: 1rem 0;
     font-size: 1rem;
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    transition: all 0.3s ease;
 }
 
-/* Sidebar h2 styles */
-.sidebar h2 i {
-    margin-right: 10px;
-    color: #292A32; /* Icon color */
+select#infoDropdown:focus {
+    outline: none;
+    border-color: #8e2de2;
+    box-shadow: 0 0 0 3px rgba(142, 45, 226, 0.1);
 }
 
-/* Sidebar h3 styles with icons */
-.info-section h3 i {
-    margin-right: 8px;
-    color: #292A32;
-    font-size: 1.1rem;
+.resizer {
+    width: 4px;
+    background: linear-gradient(0deg, #8e2de2 0%, #4a00e0 100%);
+    cursor: ew-resize;
+    position: fixed;
+    left: calc(100% - 352px);
+    top: 60px;
+    bottom: 0;
+    z-index: 1002;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.resizer:hover {
+    opacity: 1;
+}
+
+#loadingMessage {
+    padding: 1rem;
+    background: rgba(142, 45, 226, 0.1);
+    border-radius: 8px;
+    color: #4a00e0;
+    margin-top: 1rem;
+    border: 1px solid rgba(142, 45, 226, 0.2);
 }

@@ -23,7 +23,9 @@ class AstronomicalEvents:
         """
         self.logger = logging.getLogger(__name__)
         self.ts = load.timescale()
+        self.logger.info("Loading ephemeris data...")
         self.eph = load('app/static/data/de430.bsp')
+        self.logger.info("Ephemeris data loaded successfully.")
         self.location = Topos(latitude_degrees=latitude, longitude_degrees=longitude)
         self.meteor_shower_data = self.load_meteor_shower_data()
 

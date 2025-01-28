@@ -1,0 +1,78 @@
+/* about.css */
+.about-section {
+    padding: 3rem;
+    max-width: 800px;
+    margin: 2rem auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.about-section h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #8e2de2, #4a00e0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.about-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #8e2de2, #4a00e0);
+    border-radius: 2px;
+}
+
+.about-section h3 {
+    font-size: 1.6rem;
+    color: #1a1a2e;
+    margin: 1.5rem 0 1rem;
+    padding-left: 0.5rem;
+    border-left: 4px solid #8e2de2;
+}
+
+.about-section p {
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.about-section ul {
+    list-style: none;
+    padding-left: 1.5rem;
+}
+
+.about-section ul li {
+    position: relative;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.about-section ul li::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    color: #8e2de2;
+}
+
+.about-section a {
+    color: #4a00e0;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 2px solid rgba(78, 0, 224, 0.3);
+    transition: all 0.3s ease;
+}
+
+.about-section a:hover {
+    color: #8e2de2;
+    border-bottom-color: #8e2de2;
+}

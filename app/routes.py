@@ -16,6 +16,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    logging.info("Rendering index page")
     form = CityForm()  # Create a form instance
 
     if form.validate_on_submit():
@@ -34,19 +35,25 @@ def about():
 
 @main.route('/process_coordinates', methods=['POST'])
 def process_coordinates():
+    logging.info("Processing coordinates")
     try:
         data = request.get_json()
-        latitude, longitude = data['latitude'], data['longitude']
+        latitude = float(data['latitude'])  # Explicit cast to float
+        longitude = float(data['longitude'])
         return process_coordinates_logic(latitude, longitude)
-
+    except ValueError as e:
+        logging.error(f"Invalid coordinates: {e}")
+        return jsonify({"error": "Invalid latitude/longitude format"}), 400
     except Exception as e:
         logging.error(f"Error processing coordinates: {e}")
         return jsonify({"error": str(e)}), 500
 
 def process_coordinates_with_lat_lon(latitude, longitude):
+    logging.info("Processing coordinates with lat/lon")
     return process_coordinates_logic(latitude, longitude)
 
 def process_coordinates_logic(latitude, longitude):
+    logging.info(f"Processing coordinates: {latitude}, {longitude}")
     try:
         terrain_types = get_terrain_types(latitude, longitude)
         elevation = get_elevation(latitude, longitude)

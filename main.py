@@ -5,7 +5,6 @@ from app.clients.OpenMeteoClient import OpenMeteoClient
 from app.clients.OpenStreetMapClient import OpenStreetMapClient
 from app.services.UrbanCenterDistanceCalculator import UrbanCenterDistanceCalculator
 from app.services.AstronomicalEvents import AstronomicalEvents
-from app.utilities.utils import configure_logging
 from app import create_app
 
 
@@ -50,7 +49,6 @@ def main():
 
 
 if __name__ == '__main__':
-    configure_logging()
     # main()
-    app = create_app()
-    app.run()
+    create_app().run()
+    # app.run(debug=True)

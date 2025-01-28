@@ -9,7 +9,6 @@ class UrbanCenterDistanceCalculator:
     Calculate the distance from a given location to the nearest urban center.
     """
 
-    @lru_cache(maxsize=128)
     def __init__(self, latitude: float, longitude: float, urban_centers: list[dict]):
         """
         Initialize the UrbanCenterDistanceCalculator with a list of urban centers.

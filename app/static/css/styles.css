@@ -1,7 +1,8 @@
 /* styles.css */
+@import 'global.css';
 @import 'layout.css';
 @import 'sidebar.css';
 @import 'forms.css';
 @import 'charts.css';
 @import 'topbar.css';
-@import 'global.css';
+@import 'about.css';

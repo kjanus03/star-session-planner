@@ -1,16 +1,16 @@
-from functools import lru_cache
+from pathlib import Path
 from typing import Union
 
 import requests
 import requests_cache
 import logging
+import os
 
 
 class OpenElevationClient:
     """
     Client for fetching elevation data from the Open-Elevation API.
     """
-    @lru_cache(maxsize=128)
     def __init__(self, latitude: float, longitude: float, cache_expiry: int = 3600):
         """
         Constructor for the OpenElevationClient class.
@@ -21,7 +21,12 @@ class OpenElevationClient:
         self.latitude = latitude
         self.longitude = longitude
         self.elevation_url = "https://api.open-elevation.com/api/v1/lookup"
-        self.session = requests_cache.CachedSession('.cache', expire_after=cache_expiry)
+        self.logger.info(f"Initialized OpenElevationClient for coordinates ({latitude}, {longitude})")
+        CACHE_DIR = Path(os.getcwd()) / "cache"  # Creates cache in the project's root
+        CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        self.session = requests_cache.CachedSession(str(CACHE_DIR / "elevation.db"), expire_after=cache_expiry)
+
+        self.logger.info(f"Initialized requests_cache for OpenElevationClient.")
 
     def fetch_elevation(self) -> Union[float, None]:
         """

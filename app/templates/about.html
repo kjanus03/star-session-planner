@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>About</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     {% extends "base.html" %}
@@ -12,10 +15,31 @@
     {% block content %}
     <div class="about-section">
         <h2>About Star Session Planner</h2>
-        <p>This website helps stargazers plan their sessions based on weather conditions, urban proximity, and astronomical events. Developed to make stargazing more accessible, fun, and informative.</p>
+        <p>Star Session Planner is my side project focused around my passion - stargazing. The website helps stargazing
+            enthusiasts plan their sessions based on weather conditions, proximity of urban centers and astronomical events.
+            For me planning a good stargazing session has always involved multiple things - checking the weather,
+            finding a spot with a good view of the sky and knowing what was going to happen in the sky. That pushed me
+            to create a website where all that information is readily available - no more need to check for the weather
+            and meteor showers in two separate places.
+            <br><br>Developed to make stargazing more accessible!</p>
+
+        <h3>Credits</h3>
+        <p>Star Session Planner wouldn't be possible without the following APIs and services:</p>
+        <ul>
+            <li><a href="https://www.openweathermap.org" target="_blank">OpenWeatherMap API</a> - For real-time weather data.</li>
+            <li><a href="https://www.openstreetmap.org" target="_blank">OpenStreetMap API</a> - For geographical data and mapping.</li>
+            <li><a href="https://open-meteo.com" target="_blank">Open-Meteo API</a> - For accurate weather predictions.</li>
+            <li><a href="https://openelevation.org/" target="_blank">Open Elevation API</a> - For elevation data.</li>
+        </ul>
+
+        <h3>Explore the Code</h3>
+        <p>Check out the source code on GitHub: <a href="https://github.com/kjanus03/star-session-planner" target="_blank"><i class="fab fa-github"></i> Source code</a></p>
+
+        <h3>Contact</h3>
+        <p>If you'd like to get in touch, feel free to reach out via email at <a href="mailto:your.email@example.com">your.email@example.com</a>.</p>
+
     </div>
     {% endblock %}
-
 
 </body>
 </html>

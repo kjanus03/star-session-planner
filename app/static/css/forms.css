@@ -1,52 +1,67 @@
-/*forms.css*/
+/* forms.css */
 #city-search {
     position: absolute;
-    top: 60px;
-    left: 10px;
-    z-index: 1002; /* higher than map's index */
-    background-color: rgba(255, 255, 255, 0.4);
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
+    top: 80px;
+    left: 20px;
+    z-index: 1002;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+#city-search form {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
+}
+
+#city-search form.collapsed {
+    opacity: 0;
+    visibility: hidden;
+}
+
+#city-search form:not(.collapsed) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.search-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+}
+
+.search-toggle:hover {
+    transform: scale(1.1);
 }
 
 #city-search input {
-    margin: 5px 0;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    min-width: 200px;
+    transition: all 0.3s ease;
 }
 
-#city-search button {
-    width: 100%;
-    font-size: 1rem;
-    z-index: 9999;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    border-radius: 4px;
-}
-
-#city-search button:hover {
-    background-color: #0056b3;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
-#city-search button:active {
-    background-color: #004494;
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 768px) {
-    #city-search {
-        left: 10px;
-        right: 10px;
-        width: auto;
-    }
+#city-search button[type="submit"] {
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    margin: 0;
 }
