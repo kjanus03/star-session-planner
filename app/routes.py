@@ -84,13 +84,11 @@ def process_coordinates_logic(latitude, longitude):
 
 @lru_cache(maxsize=128)
 def get_coordinates_from_city(city_name):
-    nominatim_client = NominatimClient()
-    return nominatim_client.get_lat_lon(city_name)
+    return NominatimClient.get_lat_lon(city_name)
 
 @lru_cache(maxsize=128)
 def get_terrain_types(latitude, longitude):
-    osm_client = OpenStreetMapClient(latitude=latitude, longitude=longitude)
-    return osm_client.fetch_terrain_type()
+    return OpenStreetMapClient.fetch_terrain_type(latitude, longitude)
 
 @lru_cache(maxsize=128)
 def get_elevation(latitude, longitude):

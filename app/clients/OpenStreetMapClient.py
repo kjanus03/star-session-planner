@@ -1,5 +1,6 @@
+from functools import lru_cache
 from math import pi, cos
-from typing import Union
+from typing import Union, Any
 import geopy.distance
 
 import requests
@@ -7,6 +8,7 @@ import logging
 
 
 class OpenStreetMapClient:
+    _logger = logging.getLogger(__name__)
     """
     Client for fetching terrain data from the OpenStreetMap API.
     """
@@ -16,28 +18,29 @@ class OpenStreetMapClient:
         :param latitude: Latitude of the location
         :param longitude: Longitude of the location
         """
-        self.logger = logging.getLogger(__name__)
+        self.logger = OpenStreetMapClient._logger
         self.latitude = latitude
         self.longitude = longitude
         self.overpass_url = "https://overpass-api.de/api/interpreter"
 
-    def fetch_terrain_type(self) -> Union[str, list[str]]:
-        """
-        Fetch terrain type from OpenStreetMap API.
-        :return: A list of terrain types
-        """
-        overpass_query = f"""
-        [out:json];
-        (
-          node["natural"](around:100,{self.latitude},{self.longitude});
-          way["natural"](around:100,{self.latitude},{self.longitude});
-          relation["natural"](around:100,{self.latitude},{self.longitude});
-        );
-        out body;
+    @classmethod
+    @lru_cache(maxsize=1024)
+    def fetch_terrain_type(cls, latitude: float, longitude: float) -> Union[str, list[Any]]:
+        """Class-level cache for terrain types"""
+        cls._logger.info(f"Fetching terrain for {latitude},{longitude}")
+        url = "https://overpass-api.de/api/interpreter"
+        query = f"""
+            [out:json];
+            (
+              node["natural"](around:100,{latitude},{longitude});
+              way["natural"](around:100,{latitude},{longitude});
+              relation["natural"](around:100,{latitude},{longitude});
+            );
+            out body;
         """
         try:
-            self.logger.info("Fetching terrain type...")
-            response = requests.get(self.overpass_url, params={'data': overpass_query})
+            cls._logger.info("Fetching terrain type...")
+            response = requests.get(url, params={'data': query})
             response.raise_for_status()  # Raise an error for bad status codes
             data = response.json()
             elements = data.get('elements', [])
@@ -48,13 +51,13 @@ class OpenStreetMapClient:
                     terrain_types.add(element['tags']['natural'])
 
             if not terrain_types:
-                self.logger.info("No terrain type found.")
+                cls._logger.info("No terrain type found.")
                 return "Unknown terrain type"
-            self.logger.info("Terrain type fetched successfully.")
+            cls._logger.info("Terrain type fetched successfully.")
             return list(terrain_types)
         except requests.exceptions.RequestException as e:
-            self.logger.error(f"Error fetching terrain type: {e}")
-            return "Unknown terrain type"
+            cls._logger.error(f"Terrain fetch failed: {e}")
+            return "Unknown"
 
     def fetch_urban_centers(self, radius_km: int = 40) -> list[dict[str, Union[str, float]]]:
         """

@@ -1,7 +1,7 @@
 /* sidebar.css */
 /* sidebar.css */
 .sidebar {
-    width: 350px;
+    width: 26vw;
     height: calc(100vh - 61px);
     background: var(--background-secondary);
     backdrop-filter: blur(12px);
@@ -94,7 +94,7 @@ select#infoDropdown:focus {
     background: linear-gradient(0deg, #8e2de2 0%, #4a00e0 100%);
     cursor: ew-resize;
     position: fixed;
-    left: calc(100% - 352px);
+    left: calc(100% - 300px);
     top: 60px;
     bottom: 0;
     z-index: 1002;

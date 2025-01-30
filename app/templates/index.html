@@ -45,8 +45,9 @@
 
     <div id="map"></div>
 
+
     <div id="sidebar" class="sidebar">
-        <div class="resizer"></div>
+        <div id ="resizer" class="resizer"></div>
         <h2>Stargazing Info</h2>
 
         <label for="infoDropdown">Pick the type of information:</label>
@@ -87,7 +88,7 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     <!-- Link to external JavaScript -->
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+<!--    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>-->
 
 {% endblock %}
 </body>

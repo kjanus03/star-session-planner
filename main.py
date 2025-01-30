@@ -50,5 +50,5 @@ def main():
 
 if __name__ == '__main__':
     # main()
-    create_app().run()
-    # app.run(debug=True)
+    app = create_app()
+    app.run(debug=True, use_reloader=True)

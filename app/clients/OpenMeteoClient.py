@@ -1,45 +1,44 @@
 from pathlib import Path
 
 import openmeteo_requests
-import requests_cache
-import os
 import pandas as pd
 from retry_requests import retry
+import requests_cache
+import os
 import logging
 
-from app.utilities.utils import get_timezone_from_coordinates
-from app.utilities.utils import get_cloud_cover_emoji
+from app.utilities.utils import get_cloud_cover_emoji, get_timezone_from_coordinates
 
 
 class OpenMeteoClient:
-    """
-    Client for fetching weather data from the Open-Meteo API. The client exists for a picked location and timezone.
-    """
+    _shared_session = None  # Class-level session
+    _cache_expiry = 3600  # 1 hour
 
-    def __init__(self, latitude: float, longitude: float, cache_expiry: int = 3600, retries: int = 5,
-                 backoff_factor: float = 0.2):
-        """
-        Constructor for the OpenMeteoClient class.
-
-        :param latitude: Latitude of the location
-        :param longitude: Longitude of the location
-        :param cache_expiry: Cache expiry time in seconds (default: 3600)
-        :param retries: Number of retries for network requests (default: 5)
-        :param backoff_factor: Backoff factor for retrying requests (default: 0.2)
-        """
-        self.logger = logging.getLogger(__name__)
+    def __init__(self, latitude: float, longitude: float):
         self.latitude = latitude
         self.longitude = longitude
+        self.logger = logging.getLogger(__name__)
         self.timezone = get_timezone_from_coordinates(latitude, longitude)
         self.logger.info(f"Timezone for coordinates ({latitude}, {longitude}): {self.timezone}")
 
-        # Setup the Open-Meteo API client with cache and retry on error
-        CACHE_DIR = Path(os.getcwd()) / "cache"  # Creates cache in the project's root
-        CACHE_DIR.mkdir(parents=True, exist_ok=True)
-        self.session = requests_cache.CachedSession(str(CACHE_DIR / "meteo_cache"), expire_after=cache_expiry)
-        retry_session = retry(self.session, retries=retries, backoff_factor=backoff_factor)
-        self.client = openmeteo_requests.Client(session=retry_session)
-        self.url = "https://api.open-meteo.com/v1/forecast"
+        # Initialize shared session once
+        if OpenMeteoClient._shared_session is None:
+            cache_dir = Path(os.getcwd()) / "cache"
+            cache_dir.mkdir(parents=True, exist_ok=True)
+
+            session = requests_cache.CachedSession(
+                str(cache_dir / "meteo_cache"),
+                expire_after=self._cache_expiry
+            )
+            retry_session = retry(session, retries=5, backoff_factor=0.2)
+            OpenMeteoClient._shared_session = openmeteo_requests.Client(session=retry_session)
+
+        self.client = OpenMeteoClient._shared_session
+        self.logger.info("Using shared OpenMeteo session")
+
+    def fetch_weather_data(self):
+        """Instance method using shared client"""
+        url = "https://api.open-meteo.com/v1/forecast"
         self.params = {
             "latitude": self.latitude,
             "longitude": self.longitude,
@@ -49,24 +48,11 @@ class OpenMeteoClient:
             "daily": ["sunrise", "sunset", "precipitation_probability_max"],
             "timezone": self.timezone
         }
-        self.response = None
-        self.logger.info(f"Initialized OpenMeteoClient for coordinates ({latitude}, {longitude})")
 
-    def __str__(self) -> str:
-        return (f"WeatherClient for location ({self.latitude}, {self.longitude}) in timezone {self.timezone}\n"
-                f"URL: {self.url}\nParams: {self.params}")
-
-    def fetch_weather_data(self) -> None:
-        """
-        Fetch weather data from the Open-Meteo API. The data is stored in the response attribute.
-        """
         try:
-            self.logger.info("Fetching weather data...")
-            responses = self.client.weather_api(self.url, params=self.params)
-            self.response = responses[0]
-            self.logger.info("Weather data fetched successfully.")
+            self.response = self.client.weather_api(url, params=self.params)[0]
         except Exception as e:
-            self.logger.error(f"Error fetching weather data: {e}")
+            self.logger.error(f"Weather fetch failed: {e}")
             self.response = None
 
     def get_location_info(self) -> dict:
